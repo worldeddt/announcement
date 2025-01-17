@@ -7,6 +7,11 @@ services:
     image: mariadb:latest
     ports:
       - "3306:3306"
+    environment:
+      MARIADB_ROOT_PASSWORD: eddy
+    volumes:
+      - ./docker/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: --init-file=/docker-entrypoint-initdb.d/init.sql
     networks:
       - announcement_net
 
@@ -17,11 +22,14 @@ services:
       - "6379:6379"
     networks:
       - announcement_net
+
   announcement:
+    image: announcement
+    container_name: announcement_app
     ports:
       - "8080:8080"
     environment:
-      - MARIADB_HOST=db
+      MARIADB_HOST: db
     networks:
       - announcement_net
 

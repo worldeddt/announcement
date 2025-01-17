@@ -11,6 +11,6 @@ WORKDIR /app
 
 EXPOSE 8080
 
-COPY ../build/libs/announcement.jar /app/announcement.jar
+COPY build/libs/announcement.jar /app/announcement.jar
 
 CMD ["java", "-jar", "announcement.jar"]

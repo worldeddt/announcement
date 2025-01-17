@@ -1,8 +1,9 @@
+server:
+  port: 8080
+
 spring:
   application:
     name: announcement
-server:
-  port: 8080
   data:
     redis:
       host: redis
@@ -12,7 +13,7 @@ server:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://${MARIADB_HOST:localhost}:3306/announcement?serverTimezone=asia/seoul&characterEncoding=UTF-8
     username: ${MARIADB_USERNAME:root}
-    password: ${MARIADB_PASSWORD:eddy}
+    password: ${MARIADB_ROOT_PASSWORD:eddy}
   jpa:
     show-sql: true
     hibernate:
@@ -20,4 +21,3 @@ server:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MariaDBDialect
-
