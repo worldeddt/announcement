@@ -1,0 +1,30 @@
+version: "1.0"
+
+
+services:
+  db:
+    container_name: announcement_db
+    image: mariadb:latest
+    ports:
+      - "3306:3306"
+    networks:
+      - announcement_net
+
+  redis:
+    container_name: announcement_redis
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+      - announcement_net
+  announcement:
+    ports:
+      - "8080:8080"
+    environment:
+      - MARIADB_HOST=db
+    networks:
+      - announcement_net
+
+networks:
+  announcement_net:
+    driver: bridge
