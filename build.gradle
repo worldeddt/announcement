@@ -33,6 +33,8 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'jakarta.validation:jakarta.validation-api:3.1.0'
+    implementation 'org.springframework.security:spring-security-crypto:6.4.2'
 }
 
 tasks.named('test') {

@@ -3,6 +3,7 @@ package api.announcement.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
+@Data
 @Entity
 @Table
 @AllArgsConstructor
@@ -34,7 +35,6 @@ public class Notice extends BaseEntity {
 
     private int viewCount = 0;
 
-    @Column(nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_user")
     private User createdUser;

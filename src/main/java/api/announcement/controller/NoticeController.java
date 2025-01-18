@@ -21,10 +21,9 @@ public class NoticeController {
         return String.valueOf(id);
     }
 
-
     @PostMapping("")
-    public ResponseEntity<> post(@RequestBody NoticeRequestDto noticeRequestDto) {
-
+    public ResponseEntity<NoticeRequestDto> post(@RequestBody NoticeRequestDto noticeRequestDto) {
         noticeService.createNotice(noticeRequestDto);
+        return ResponseEntity.ok().body(new NoticeRequestDto());
     }
 }

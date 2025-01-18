@@ -3,10 +3,10 @@ package api.announcement.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Getter
+@Data
 @Table
 @Entity
 @AllArgsConstructor
