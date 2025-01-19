@@ -16,6 +16,8 @@ import static api.announcement.exception.ErrorCode.NOT_FOUND_ATTACHMENT;
 public class AttachmentService {
 
     private final AttachmentRepository attachmentRepository;
+    private final RedisService redisService;
+    private static final String NOTICE_CACHE_PREFIX = "notice:";
 
     @Transactional(rollbackFor = Exception.class)
     public AttachmentResponseDto update(Long id, AttachmentUpdateRequestDto attachmentUpdateRequestDto) {
@@ -23,6 +25,12 @@ public class AttachmentService {
                 NOT_FOUND_ATTACHMENT::build
         );
 
-        return attachment.toUpdate(attachmentUpdateRequestDto).toDto();
+        Attachment updatedAttachment = attachment.toUpdate(attachmentUpdateRequestDto);
+
+        if (redisService.hasKey(NOTICE_CACHE_PREFIX + updatedAttachment.getNotice().getId())) {
+            redisService.deleteValue(NOTICE_CACHE_PREFIX + updatedAttachment.getNotice().getId());
+        }
+
+        return updatedAttachment.toDto();
     }
 }

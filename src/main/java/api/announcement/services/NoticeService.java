@@ -25,10 +25,11 @@ import java.time.LocalDateTime;
 public class NoticeService {
     private final NoticeRepository noticeRepository;
     private final UserRepository userRepository;
-    private final AttachmentService attachmentService;
+    private final RedisService redisService;
+    private static final String NOTICE_CACHE_PREFIX = "notice:";
 
     @Transactional(rollbackFor = Exception.class)
-    public Notice createNotice(NoticeRequestDto requestDto) {
+    public NoticeResponseDto createNotice(NoticeRequestDto requestDto) {
         User user = userRepository.findById(requestDto.getCreateId())
                 .orElseThrow(ErrorCode.NOT_FOUND_USER::build);
 
@@ -52,12 +53,23 @@ public class NoticeService {
         );
         notice.setStatus(NoticeStatus.ACTIVE);
 
-        return noticeRepository.save(notice);
+        Notice saveNotice = noticeRepository.save(notice);
+
+        redisService.putValue(NOTICE_CACHE_PREFIX+saveNotice.getId(), saveNotice);
+
+        return notice.toDto();
     }
 
     public NoticeResponseDto getNoticeById(Long noticeId) {
+        if (redisService.hasKey(NOTICE_CACHE_PREFIX+noticeId)) {
+            Notice value = (Notice) redisService.getValue(NOTICE_CACHE_PREFIX + noticeId);
+            return value.toDto();
+        }
+
         Notice notice = noticeRepository.findById(noticeId)
                 .orElseThrow(ErrorCode.NOT_FOUND_NOTICE::build);
+
+        redisService.putValue(NOTICE_CACHE_PREFIX+noticeId, notice);
 
         return notice.toDto();
     }
@@ -76,6 +88,8 @@ public class NoticeService {
                             attachment.setStatus(AttachmentStatus.DELETED);
                         }
                 );
+
+        redisService.deleteValue(NOTICE_CACHE_PREFIX + noticeId);
     }
 
     public Page<NoticeResponseDto> getNotices(Pageable pageable) {
@@ -88,7 +102,10 @@ public class NoticeService {
         Notice notice = noticeRepository.findById(noticeId)
                 .orElseThrow(ErrorCode.NOT_FOUND_NOTICE::build);
 
-        notice.toUpdate(requestDto);
+        Notice updatedNotice = notice.toUpdate(requestDto);
+
+        redisService.putValue(NOTICE_CACHE_PREFIX + noticeId, updatedNotice);
+
         return notice.toDto();
     }
 }

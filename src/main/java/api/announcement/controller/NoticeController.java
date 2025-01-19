@@ -26,9 +26,8 @@ public class NoticeController {
     }
 
     @PostMapping("")
-    public ResponseEntity<NoticeRequestDto> post(@RequestBody NoticeRequestDto noticeRequestDto) {
-        noticeService.createNotice(noticeRequestDto);
-        return ResponseEntity.ok().body(new NoticeRequestDto());
+    public ResponseEntity<NoticeResponseDto> post(@RequestBody NoticeRequestDto noticeRequestDto) {
+        return ResponseEntity.ok().body(noticeService.createNotice(noticeRequestDto));
     }
 
     @DeleteMapping("/{id}")
