@@ -5,8 +5,10 @@ import api.announcement.controller.dto.AttachmentResponseDto;
 import api.announcement.controller.dto.NoticeRequestDto;
 import api.announcement.controller.dto.NoticeResponseDto;
 import api.announcement.controller.dto.NoticeUpdateRequestDto;
+import api.announcement.entities.Attachment;
 import api.announcement.entities.Notice;
 import api.announcement.entities.User;
+import api.announcement.enums.NoticeStatus;
 import api.announcement.exception.ErrorCode;
 import api.announcement.repositories.NoticeRepository;
 import api.announcement.repositories.UserRepository;
@@ -26,7 +28,7 @@ public class NoticeService {
 
     @Transactional(rollbackFor = Exception.class)
     public Notice createNotice(NoticeRequestDto requestDto) {
-        User user = userRepository.findById(requestDto.getUserId())
+        User user = userRepository.findById(requestDto.getCreateId())
                 .orElseThrow(ErrorCode.NOT_FOUND_USER::build);
 
         Notice notice = new Notice();
@@ -35,6 +37,18 @@ public class NoticeService {
         notice.setStartDate(requestDto.getStartDate());
         notice.setEndDate(requestDto.getEndDate());
         notice.setCreatedUser(user);
+        notice.setAttachments(
+                requestDto.getAttachments().stream().map(
+                        attachmentRequestDto -> {
+                            Attachment attachment = new Attachment();
+                            attachment.setFileUrl(attachmentRequestDto.getFilePath());
+                            attachment.setFileName(attachmentRequestDto.getFileName());
+                            attachment.setNotice(notice);
+                            return attachment;
+                        }
+                ).toList()
+        );
+        notice.setStatus(NoticeStatus.ACTIVE);
 
         return noticeRepository.save(notice);
     }

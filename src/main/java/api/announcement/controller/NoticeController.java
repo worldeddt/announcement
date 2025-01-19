@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class NoticeController {
 
+    //todo update 시 view count 추가
+    //todo delete 시 상태값 바꾸기
+
     private final NoticeService noticeService;
 
     @GetMapping("/{id}")

@@ -22,7 +22,7 @@ public class NoticeRequestDto {
     @NotNull
     private LocalDateTime endDate;
 
-    private List<String> attachments;
+    private List<AttachmentRequestDto> attachments;
 
-    private Long userId;
+    private Long createId;
 }
