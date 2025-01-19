@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class NoticeService {
@@ -59,5 +61,17 @@ public class NoticeService {
                 .build();
 
         return noticeResponseDto;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteNotice(Long noticeId) {
+        Notice notice = noticeRepository.findById(noticeId)
+                .orElseThrow(ErrorCode.NOT_FOUND_NOTICE::build);
+
+        notice.setDeletedAt(LocalDateTime.now());
+        notice.getAttachments()
+                .forEach(attachment ->
+                        attachment.setDeletedAt(LocalDateTime.now())
+                );
     }
 }

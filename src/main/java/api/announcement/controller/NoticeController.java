@@ -28,4 +28,9 @@ public class NoticeController {
         return ResponseEntity.ok().body(new NoticeRequestDto());
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        noticeService.deleteNotice(id);
+        return ResponseEntity.ok().build();
+    }
 }
