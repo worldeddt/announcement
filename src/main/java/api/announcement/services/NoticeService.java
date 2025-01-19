@@ -1,7 +1,6 @@
 package api.announcement.services;
 
 
-import api.announcement.controller.dto.AttachmentResponseDto;
 import api.announcement.controller.dto.NoticeRequestDto;
 import api.announcement.controller.dto.NoticeResponseDto;
 import api.announcement.controller.dto.NoticeUpdateRequestDto;
@@ -89,15 +88,7 @@ public class NoticeService {
         Notice notice = noticeRepository.findById(noticeId)
                 .orElseThrow(ErrorCode.NOT_FOUND_NOTICE::build);
 
-        notice.setTitle(requestDto.getTitle());
-        notice.setContent(requestDto.getContent());
-        notice.setStartDate(requestDto.getStartDate());
-        notice.setEndDate(requestDto.getEndDate());
-
-        notice.setRecentUpdateUser(requestDto.getUpdateUserId());
-
-        if (requestDto.isViewed()) notice.setViewCount(notice.getViewCount() + 1);
-
+        notice.toUpdate(requestDto);
         return notice.toDto();
     }
 }

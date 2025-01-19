@@ -2,6 +2,7 @@ package api.announcement.entities;
 
 
 import api.announcement.controller.dto.NoticeResponseDto;
+import api.announcement.controller.dto.NoticeUpdateRequestDto;
 import api.announcement.enums.NoticeStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -68,5 +69,41 @@ public class Notice extends BaseEntity {
                                 .toList()
                 )
                 .build();
+    }
+
+    public Notice toUpdate(NoticeUpdateRequestDto noticeUpdateRequestDto) {
+
+        boolean updateUserColumn = false;
+
+        if (noticeUpdateRequestDto.getTitle() != null) {
+            setTitle(noticeUpdateRequestDto.getTitle());
+            updateUserColumn = true;
+        }
+
+        if (noticeUpdateRequestDto.getContent() != null) {
+            setContent(noticeUpdateRequestDto.getContent());
+            updateUserColumn = true;
+        }
+
+        if (noticeUpdateRequestDto.getStartDate() != null) {
+            setStartDate(noticeUpdateRequestDto.getStartDate());
+            updateUserColumn = true;
+        }
+
+        if (noticeUpdateRequestDto.getEndDate() != null) {
+            setEndDate(noticeUpdateRequestDto.getEndDate());
+            updateUserColumn = true;
+        }
+
+        if (noticeUpdateRequestDto.isViewed()) {
+            setViewCount(getViewCount() + 1);
+            updateUserColumn = true;
+        }
+
+        if (updateUserColumn) {
+            setRecentUpdateUser(noticeUpdateRequestDto.getUpdateUserId());
+        }
+
+        return this;
     }
 }

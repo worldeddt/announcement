@@ -33,6 +33,8 @@ public class Attachment extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private AttachmentStatus status;
 
+    private Long recentUpdateUser;
+
     public AttachmentResponseDto toDto() {
         return AttachmentResponseDto.builder()
                 .id(this.getId())
@@ -42,8 +44,22 @@ public class Attachment extends BaseEntity {
     }
 
     public Attachment toUpdate(AttachmentUpdateRequestDto attachmentUpdateRequestDto) {
-        setFileUrl(attachmentUpdateRequestDto.getFileUrl());
-        setFileName(attachmentUpdateRequestDto.getFileName());
+
+        boolean updateUserColumn = false;
+
+        if (attachmentUpdateRequestDto.getFileUrl() != null) {
+            setFileUrl(attachmentUpdateRequestDto.getFileUrl());
+            updateUserColumn = true;
+        }
+
+        if (attachmentUpdateRequestDto.getFileName() != null) {
+            setFileName(attachmentUpdateRequestDto.getFileName());
+            updateUserColumn = true;
+        }
+
+        if (updateUserColumn) {
+            setRecentUpdateUser(attachmentUpdateRequestDto.getUpdateUserId());
+        }
 
         return this;
     }

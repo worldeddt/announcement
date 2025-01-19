@@ -6,9 +6,9 @@ import lombok.Getter;
 
 @Getter
 public class AttachmentUpdateRequestDto {
-    @NotBlank
     private String fileName;
+    private String fileUrl;
 
     @NotBlank
-    private String fileUrl;
+    private Long updateUserId;
 }
