@@ -68,10 +68,6 @@ public class Notice extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private NoticeStatus status;
 
-    public void setAttachments(List<Attachment> attachments) {
-        attachments.forEach(attachment -> attachment.setNotice(this));
-    }
-
     public NoticeResponseDto toDto() {
         return NoticeResponseDto.builder()
                 .id(this.getId())

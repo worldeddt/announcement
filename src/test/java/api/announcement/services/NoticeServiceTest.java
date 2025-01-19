@@ -12,6 +12,7 @@ import api.announcement.enums.Role;
 import api.announcement.repositories.NoticeRepository;
 import api.announcement.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,7 +29,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 class NoticeServiceTest {
 
-    @Autowired
+    @Mock
     private RedisService redisService;
 
     @Autowired
@@ -95,8 +96,6 @@ class NoticeServiceTest {
 
         //when
         NoticeResponseDto responseDto = noticeService.createNotice(noticeRequestDto);
-
-        System.out.printf("ddd :"+responseDto.getAttachments().get(0).getFileName());
 
         // Then
         assertNotNull(responseDto);

@@ -18,7 +18,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,17 +42,17 @@ public class NoticeService {
         notice.setStartDate(requestDto.getStartDate());
         notice.setEndDate(requestDto.getEndDate());
         notice.setCreatedUser(user);
-        notice.setAttachments(
-                requestDto.getAttachments().stream().map(
-                        attachmentRequestDto -> {
-                            Attachment attachment = new Attachment();
-                            attachment.setFileUrl(attachmentRequestDto.getFilePath());
-                            attachment.setFileName(attachmentRequestDto.getFileName());
-                            attachment.setStatus(AttachmentStatus.ACTIVE);
-                            return attachment;
-                        }
-                ).toList()
-        );
+
+        List<Attachment> attachments = requestDto.getAttachments().stream()
+                .map(attachmentRequestDto -> {
+                    Attachment attachment = new Attachment();
+                    attachment.setFileUrl(attachmentRequestDto.getFilePath());
+                    attachment.setFileName(attachmentRequestDto.getFileName());
+                    attachment.setNotice(notice);
+                    return attachment;
+                }).collect(Collectors.toList());
+
+        notice.setAttachments(attachments);
         notice.setStatus(NoticeStatus.ACTIVE);
 
         Notice saveNotice = noticeRepository.save(notice);
