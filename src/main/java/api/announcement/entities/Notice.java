@@ -1,7 +1,6 @@
 package api.announcement.entities;
 
 
-import api.announcement.controller.dto.AttachmentResponseDto;
 import api.announcement.controller.dto.NoticeResponseDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
