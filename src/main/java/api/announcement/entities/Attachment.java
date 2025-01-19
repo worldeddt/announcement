@@ -5,15 +5,14 @@ import api.announcement.controller.dto.AttachmentResponseDto;
 import api.announcement.controller.dto.AttachmentUpdateRequestDto;
 import api.announcement.enums.AttachmentStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @Table
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper=false)
 public class Attachment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +37,7 @@ public class Attachment extends BaseEntity {
     public AttachmentResponseDto toDto() {
         return AttachmentResponseDto.builder()
                 .id(this.getId())
-                .fileUrl(this.fileUrl)
+                .fileUrl(this.getFileUrl())
                 .fileName(this.getFileName())
                 .build();
     }

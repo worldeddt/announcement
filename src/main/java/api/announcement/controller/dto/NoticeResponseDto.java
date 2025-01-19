@@ -18,7 +18,7 @@ public class NoticeResponseDto {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
 
-    private int viewCount = 0;
+    private int viewCount;
     private User createdUser;
     private Long recentUpdateUser;
 

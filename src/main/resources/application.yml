@@ -2,11 +2,14 @@ server:
   port: 8080
 
 spring:
+  jackson:
+    date-format: yyyy-MM-dd'T'HH:mm:ss
+    time-zone: UTC
   application:
     name: announcement
   data:
     redis:
-      host: redis
+      host: localhost
       port: 6379
   datasource:
     initialize: false

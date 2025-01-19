@@ -4,9 +4,16 @@ package api.announcement.entities;
 import api.announcement.controller.dto.NoticeResponseDto;
 import api.announcement.controller.dto.NoticeUpdateRequestDto;
 import api.announcement.enums.NoticeStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -18,6 +25,7 @@ import java.util.List;
 @Table
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper=false)
 public class Notice extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,9 +37,17 @@ public class Notice extends BaseEntity {
     @Column(nullable = false, length = 10000)
     private String content;
 
+    @JsonProperty("startDate")
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(nullable = false)
     private LocalDateTime startDate;
 
+    @JsonProperty("endDate")
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(nullable = false)
     private LocalDateTime endDate;
 
@@ -51,6 +67,10 @@ public class Notice extends BaseEntity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private NoticeStatus status;
+
+    public void setAttachments(List<Attachment> attachments) {
+        attachments.forEach(attachment -> attachment.setNotice(this));
+    }
 
     public NoticeResponseDto toDto() {
         return NoticeResponseDto.builder()

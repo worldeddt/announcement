@@ -11,6 +11,7 @@ class AnnouncementApplicationTests {
     // dto 검증
     // paging 검증
     // 동시성 체크
+    // 캐시 체크
 
     @Test
     void contextLoads() {

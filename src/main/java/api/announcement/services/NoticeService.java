@@ -46,7 +46,6 @@ public class NoticeService {
                             attachment.setFileUrl(attachmentRequestDto.getFilePath());
                             attachment.setFileName(attachmentRequestDto.getFileName());
                             attachment.setStatus(AttachmentStatus.ACTIVE);
-                            attachment.setNotice(notice);
                             return attachment;
                         }
                 ).toList()
