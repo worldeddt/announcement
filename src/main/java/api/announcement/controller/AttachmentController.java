@@ -3,6 +3,7 @@ package api.announcement.controller;
 
 import api.announcement.controller.dto.AttachmentResponseDto;
 import api.announcement.controller.dto.AttachmentUpdateRequestDto;
+import api.announcement.services.AttachmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

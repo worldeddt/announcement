@@ -1,4 +1,4 @@
-package api.announcement.controller;
+package api.announcement.services;
 
 
 import api.announcement.controller.dto.AttachmentResponseDto;
