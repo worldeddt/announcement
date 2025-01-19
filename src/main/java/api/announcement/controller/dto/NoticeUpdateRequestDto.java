@@ -15,12 +15,14 @@ public class NoticeUpdateRequestDto {
     @NotBlank
     private String content;
 
-    @NotNull
+    @NotBlank
     private LocalDateTime startDate;
 
-    @NotNull
+    @NotBlank
     private LocalDateTime endDate;
 
     @NotBlank
     private Long updateUserId;
+
+    private boolean viewed;
 }

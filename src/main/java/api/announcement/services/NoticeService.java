@@ -8,6 +8,7 @@ import api.announcement.controller.dto.NoticeUpdateRequestDto;
 import api.announcement.entities.Attachment;
 import api.announcement.entities.Notice;
 import api.announcement.entities.User;
+import api.announcement.enums.AttachmentStatus;
 import api.announcement.enums.NoticeStatus;
 import api.announcement.exception.ErrorCode;
 import api.announcement.repositories.NoticeRepository;
@@ -25,6 +26,7 @@ import java.time.LocalDateTime;
 public class NoticeService {
     private final NoticeRepository noticeRepository;
     private final UserRepository userRepository;
+    private final AttachmentService attachmentService;
 
     @Transactional(rollbackFor = Exception.class)
     public Notice createNotice(NoticeRequestDto requestDto) {
@@ -87,9 +89,13 @@ public class NoticeService {
                 .orElseThrow(ErrorCode.NOT_FOUND_NOTICE::build);
 
         notice.setDeletedAt(LocalDateTime.now());
+        notice.setStatus(NoticeStatus.DELETED);
         notice.getAttachments()
                 .forEach(attachment ->
-                        attachment.setDeletedAt(LocalDateTime.now())
+                        {
+                            attachment.setDeletedAt(LocalDateTime.now());
+                            attachment.setStatus(AttachmentStatus.DELETED);
+                        }
                 );
     }
 
@@ -107,7 +113,10 @@ public class NoticeService {
         notice.setContent(requestDto.getContent());
         notice.setStartDate(requestDto.getStartDate());
         notice.setEndDate(requestDto.getEndDate());
+
         notice.setRecentUpdateUser(requestDto.getUpdateUserId());
+
+        if (requestDto.isViewed()) notice.setViewCount(notice.getViewCount() + 1);
 
         return notice.toDto();
     }
