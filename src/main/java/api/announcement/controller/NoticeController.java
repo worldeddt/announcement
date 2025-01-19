@@ -2,6 +2,7 @@ package api.announcement.controller;
 
 
 import api.announcement.controller.dto.NoticeRequestDto;
+import api.announcement.controller.dto.NoticeResponseDto;
 import api.announcement.entities.Notice;
 import api.announcement.repositories.NoticeRepository;
 import api.announcement.services.NoticeService;
@@ -17,8 +18,8 @@ public class NoticeController {
     private final NoticeService noticeService;
 
     @GetMapping("/{id}")
-    public String getById(@PathVariable Long id) {
-        return String.valueOf(id);
+    public ResponseEntity<NoticeResponseDto> getById(@PathVariable Long id) {
+        return ResponseEntity.ok().body(noticeService.getNoticeById(id));
     }
 
     @PostMapping("")
@@ -26,4 +27,5 @@ public class NoticeController {
         noticeService.createNotice(noticeRequestDto);
         return ResponseEntity.ok().body(new NoticeRequestDto());
     }
+
 }
