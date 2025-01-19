@@ -59,28 +59,7 @@ public class NoticeService {
         Notice notice = noticeRepository.findById(noticeId)
                 .orElseThrow(ErrorCode.NOT_FOUND_NOTICE::build);
 
-        NoticeResponseDto noticeResponseDto
-                = NoticeResponseDto.builder()
-                .id(notice.getId())
-                .title(notice.getTitle())
-                .content(notice.getContent())
-                .viewCount(notice.getViewCount())
-                .startDate(notice.getStartDate())
-                .endDate(notice.getEndDate())
-                .createdUser(notice.getCreatedUser())
-                .attachments(
-                        notice.getAttachments().stream()
-                                .map( noticeAttachment ->
-                                        AttachmentResponseDto.builder()
-                                                .id(noticeAttachment.getId())
-                                                .fileName(noticeAttachment.getFileName())
-                                                .fileUrl(noticeAttachment.getFileUrl())
-                                                .build()
-                                ).toList()
-                )
-                .build();
-
-        return noticeResponseDto;
+        return notice.toDto();
     }
 
     @Transactional(rollbackFor = Exception.class)
