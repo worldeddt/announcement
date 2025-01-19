@@ -1,10 +1,11 @@
 package api.announcement.entities;
 
 
+import api.announcement.controller.dto.AttachmentResponseDto;
+import api.announcement.controller.dto.NoticeResponseDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -43,4 +44,22 @@ public class Notice extends BaseEntity {
             cascade = {CascadeType.MERGE, CascadeType.PERSIST},
             orphanRemoval = true)
     private List<Attachment> attachments = new ArrayList<>();
+
+    public NoticeResponseDto toDto() {
+        return NoticeResponseDto.builder()
+                .id(this.getId())
+                .title(this.getTitle())
+                .content(this.getContent())
+                .viewCount(this.getViewCount())
+                .startDate(this.getStartDate())
+                .endDate(this.getEndDate())
+                .createdUser(this.getCreatedUser())
+                .attachments(
+                        this.getAttachments()
+                                .stream()
+                                .map(Attachment::toDto)
+                                .toList()
+                )
+                .build();
+    }
 }

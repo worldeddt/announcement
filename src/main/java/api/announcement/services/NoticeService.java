@@ -10,6 +10,8 @@ import api.announcement.exception.ErrorCode;
 import api.announcement.repositories.NoticeRepository;
 import api.announcement.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,6 +47,7 @@ public class NoticeService {
                 .id(notice.getId())
                 .title(notice.getTitle())
                 .content(notice.getContent())
+                .viewCount(notice.getViewCount())
                 .startDate(notice.getStartDate())
                 .endDate(notice.getEndDate())
                 .createdUser(notice.getCreatedUser())
@@ -73,5 +76,10 @@ public class NoticeService {
                 .forEach(attachment ->
                         attachment.setDeletedAt(LocalDateTime.now())
                 );
+    }
+
+    public Page<NoticeResponseDto> getNotices(Pageable pageable) {
+        Page<Notice> allNotice = noticeRepository.findAll(pageable);
+        return allNotice.map(Notice::toDto);
     }
 }

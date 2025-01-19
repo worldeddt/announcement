@@ -1,6 +1,7 @@
 package api.announcement.entities;
 
 
+import api.announcement.controller.dto.AttachmentResponseDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,4 +26,12 @@ public class Attachment extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "notice_id")
     private Notice notice;
+
+    public AttachmentResponseDto toDto() {
+        return AttachmentResponseDto.builder()
+                .id(this.getId())
+                .fileUrl(this.fileUrl)
+                .fileName(this.getFileName())
+                .build();
+    }
 }
