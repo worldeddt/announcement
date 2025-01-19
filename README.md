@@ -14,6 +14,11 @@ docker engine 이 실행되어 있는 상태에서 아래 명령어로 빌드합
 ```shell
 
 # 반드시 메인 폴더에서 실행 요망
+
+# jar 파일 생성
+gradlew bootJar
+
+# image 생성 후, container 실행 
 docker build -t announcement .
 docker-compose build
 docker-compose up -d 
