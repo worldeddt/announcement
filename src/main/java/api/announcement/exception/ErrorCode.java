@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum ErrorCode {
     IN_VALID_ARGUMENT(HttpStatus.BAD_REQUEST, "NO_0011", "find invalid argument"),
+    NOT_FOUND_ATTACHMENT(HttpStatus.NOT_FOUND, "NO_0003", "not found attachment"),
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "NO_0002", "not found user"),
     NOT_FOUND_NOTICE(HttpStatus.NOT_FOUND, "NO_0001", "not found notice");
 

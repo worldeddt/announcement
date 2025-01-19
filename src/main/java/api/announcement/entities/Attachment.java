@@ -2,6 +2,8 @@ package api.announcement.entities;
 
 
 import api.announcement.controller.dto.AttachmentResponseDto;
+import api.announcement.controller.dto.AttachmentUpdateRequestDto;
+import api.announcement.enums.AttachmentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,11 +29,22 @@ public class Attachment extends BaseEntity {
     @JoinColumn(name = "notice_id")
     private Notice notice;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AttachmentStatus status;
+
     public AttachmentResponseDto toDto() {
         return AttachmentResponseDto.builder()
                 .id(this.getId())
                 .fileUrl(this.fileUrl)
                 .fileName(this.getFileName())
                 .build();
+    }
+
+    public Attachment toUpdate(AttachmentUpdateRequestDto attachmentUpdateRequestDto) {
+        setFileUrl(attachmentUpdateRequestDto.getFileUrl());
+        setFileName(attachmentUpdateRequestDto.getFileName());
+
+        return this;
     }
 }

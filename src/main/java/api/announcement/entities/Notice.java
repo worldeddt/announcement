@@ -2,6 +2,7 @@ package api.announcement.entities;
 
 
 import api.announcement.controller.dto.NoticeResponseDto;
+import api.announcement.enums.NoticeStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -39,10 +40,16 @@ public class Notice extends BaseEntity {
     @JoinColumn(name = "created_user")
     private User createdUser;
 
+    private Long recentUpdateUser;
+
     @OneToMany(mappedBy = "notice",
             cascade = {CascadeType.MERGE, CascadeType.PERSIST},
             orphanRemoval = true)
     private List<Attachment> attachments = new ArrayList<>();
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private NoticeStatus status;
 
     public NoticeResponseDto toDto() {
         return NoticeResponseDto.builder()
@@ -53,6 +60,7 @@ public class Notice extends BaseEntity {
                 .startDate(this.getStartDate())
                 .endDate(this.getEndDate())
                 .createdUser(this.getCreatedUser())
+                .recentUpdateUser(this.getRecentUpdateUser())
                 .attachments(
                         this.getAttachments()
                                 .stream()

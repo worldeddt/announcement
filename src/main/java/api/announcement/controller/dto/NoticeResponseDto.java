@@ -20,6 +20,7 @@ public class NoticeResponseDto {
 
     private int viewCount = 0;
     private User createdUser;
+    private Long recentUpdateUser;
 
     private List<AttachmentResponseDto> attachments;
 }

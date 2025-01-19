@@ -10,6 +10,7 @@ class AnnouncementApplicationTests {
     // 공지사항 글 내 특수문자 필터링
     // dto 검증
     // paging 검증
+    // 동시성 체크
 
     @Test
     void contextLoads() {

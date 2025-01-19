@@ -4,6 +4,7 @@ package api.announcement.services;
 import api.announcement.controller.dto.AttachmentResponseDto;
 import api.announcement.controller.dto.NoticeRequestDto;
 import api.announcement.controller.dto.NoticeResponseDto;
+import api.announcement.controller.dto.NoticeUpdateRequestDto;
 import api.announcement.entities.Notice;
 import api.announcement.entities.User;
 import api.announcement.exception.ErrorCode;
@@ -81,5 +82,19 @@ public class NoticeService {
     public Page<NoticeResponseDto> getNotices(Pageable pageable) {
         Page<Notice> allNotice = noticeRepository.findAll(pageable);
         return allNotice.map(Notice::toDto);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public NoticeResponseDto updateNotice(Long noticeId, NoticeUpdateRequestDto requestDto) {
+        Notice notice = noticeRepository.findById(noticeId)
+                .orElseThrow(ErrorCode.NOT_FOUND_NOTICE::build);
+
+        notice.setTitle(requestDto.getTitle());
+        notice.setContent(requestDto.getContent());
+        notice.setStartDate(requestDto.getStartDate());
+        notice.setEndDate(requestDto.getEndDate());
+        notice.setRecentUpdateUser(requestDto.getUpdateUserId());
+
+        return notice.toDto();
     }
 }

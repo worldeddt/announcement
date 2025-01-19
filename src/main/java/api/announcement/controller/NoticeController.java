@@ -3,6 +3,7 @@ package api.announcement.controller;
 
 import api.announcement.controller.dto.NoticeRequestDto;
 import api.announcement.controller.dto.NoticeResponseDto;
+import api.announcement.controller.dto.NoticeUpdateRequestDto;
 import api.announcement.services.NoticeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -44,4 +45,14 @@ public class NoticeController {
             noticeService.getNotices(pageable)
         );
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<NoticeResponseDto> update(
+            @PathVariable Long id, @RequestBody NoticeUpdateRequestDto noticeUpdateRequestDto
+    ) {
+        return ResponseEntity.ok().body(
+            noticeService.updateNotice(id, noticeUpdateRequestDto)
+        );
+    }
+
 }
