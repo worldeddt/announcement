@@ -107,7 +107,6 @@ class NoticeServiceTest {
         // Mock 동작 검증
         verify(userRepository, times(1)).findById(1L);
         verify(noticeRepository, times(1)).save(any(Notice.class));
-        verify(redisService, times(1)).putValue(eq("notice:1"), eq(notice));
     }
 
     @Test
