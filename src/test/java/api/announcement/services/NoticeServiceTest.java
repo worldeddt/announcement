@@ -11,8 +11,8 @@ import api.announcement.enums.NoticeStatus;
 import api.announcement.enums.Role;
 import api.announcement.repositories.NoticeRepository;
 import api.announcement.repositories.UserRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,15 +22,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class NoticeServiceTest {
-
-    @Mock
-    private RedisService redisService;
 
     @Autowired
     private NoticeService noticeService;
@@ -43,6 +41,13 @@ class NoticeServiceTest {
 
     @MockitoBean
     private UserRepository userRepository;
+
+    @MockitoBean
+    private RedisService redisService;
+
+    private static final String NOTICE_CACHE_PREFIX = "notice:";
+
+    String datetimeFormat = "yyyy-MM-dd HH:mm:ss";
 
 
     @Test
@@ -111,6 +116,55 @@ class NoticeServiceTest {
 
     @Test
     void getNoticeById() {
+
+        //Given
+        Long noticeId = 1L;
+
+        User user = new User();
+        user.setId(1L);
+        user.setRole(Role.ADMIN);
+        user.setUsername("admin");
+        user.setEmail("user@example.com");
+        user.setUsername(passwordEncoder.encode("eddy"));
+
+        Attachment attachment = new Attachment();
+        attachment.setFileUrl("test.jpg");
+        attachment.setFileName("test.jpg");
+        attachment.setStatus(AttachmentStatus.ACTIVE);
+
+        Notice notice = new Notice();
+        notice.setId(noticeId);
+        notice.setTitle("test");
+        notice.setContent("test contents");
+        notice.setStartDate(LocalDateTime.now().minusDays(1));
+        notice.setEndDate(LocalDateTime.now().plusDays(1));
+        notice.setCreatedUser(
+            user
+        );
+        notice.setAttachments(
+                List.of(
+                        attachment
+                )
+        );
+
+        //Mock Repository
+        when(noticeRepository.findById(noticeId)).thenReturn(Optional.of(notice));
+        when(redisService.hasKey(NOTICE_CACHE_PREFIX + noticeId)).thenReturn(true);
+        when(redisService.getValue(NOTICE_CACHE_PREFIX + noticeId)).thenReturn(notice);
+
+        //when
+        NoticeResponseDto responseNotice = noticeService.getNoticeById(noticeId);
+
+        //then
+        Assertions.assertNotNull(responseNotice);
+        Assertions.assertEquals(notice.getTitle(), responseNotice.getTitle());
+        Assertions.assertEquals(notice.getContent(), responseNotice.getContent());
+        Assertions.assertEquals(notice.getAttachments().size(), responseNotice.getAttachments().size());
+
+        //Mock 검증
+        verify(redisService, times(1)).hasKey(NOTICE_CACHE_PREFIX + noticeId);
+        verify(redisService, times(1)).getValue(NOTICE_CACHE_PREFIX + noticeId);
+        verify(noticeRepository, never()).findById(anyLong());
     }
 
     @Test

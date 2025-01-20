@@ -57,7 +57,7 @@ public class NoticeService {
 
         Notice saveNotice = noticeRepository.save(notice);
 
-        redisService.putValue(NOTICE_CACHE_PREFIX+saveNotice.getId(), saveNotice);
+        redisService.putValue(NOTICE_CACHE_PREFIX+saveNotice.getId(), saveNotice, 30);
 
         return notice.toDto();
     }
@@ -71,7 +71,7 @@ public class NoticeService {
         Notice notice = noticeRepository.findById(noticeId)
                 .orElseThrow(ErrorCode.NOT_FOUND_NOTICE::build);
 
-        redisService.putValue(NOTICE_CACHE_PREFIX+noticeId, notice);
+        redisService.putValue(NOTICE_CACHE_PREFIX+noticeId, notice, 30);
 
         return notice.toDto();
     }
@@ -106,7 +106,7 @@ public class NoticeService {
 
         Notice updatedNotice = notice.toUpdate(requestDto);
 
-        redisService.putValue(NOTICE_CACHE_PREFIX + noticeId, updatedNotice);
+        redisService.putValue(NOTICE_CACHE_PREFIX + noticeId, updatedNotice, 30);
 
         return notice.toDto();
     }
