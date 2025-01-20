@@ -12,6 +12,7 @@ class AnnouncementApplicationTests {
     // paging 검증
     // 동시성 체크
     // 캐시 체크
+    // delete 후 호출 체크
 
     @Test
     void contextLoads() {

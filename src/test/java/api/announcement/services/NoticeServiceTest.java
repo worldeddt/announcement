@@ -15,6 +15,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
@@ -173,6 +177,61 @@ class NoticeServiceTest {
 
     @Test
     void getNotices() {
+
+        // Mock data
+        Long noticeId = 1L;
+        Long attachmentId = 1L;
+
+        User user = new User();
+        user.setId(1L);
+        user.setRole(Role.ADMIN);
+        user.setUsername("admin");
+        user.setEmail("user@example.com");
+        user.setUsername(passwordEncoder.encode("eddy"));
+
+        Attachment attachment = new Attachment();
+        attachment.setId(attachmentId);
+        attachment.setFileUrl("test.jpg");
+        attachment.setFileName("test.jpg");
+        attachment.setStatus(AttachmentStatus.ACTIVE);
+
+        Notice notice = new Notice();
+        notice.setId(noticeId);
+        notice.setTitle("test");
+        notice.setContent("test contents");
+        notice.setStartDate(LocalDateTime.now().minusDays(1));
+        notice.setEndDate(LocalDateTime.now().plusDays(1));
+        notice.setCreatedUser(
+                user
+        );
+        notice.setAttachments(
+                List.of(
+                        attachment
+                )
+        );
+        notice.setStatus(NoticeStatus.ACTIVE);
+
+
+        Pageable pageable = PageRequest.of(0, 5);
+
+        List<Notice> mockList = List.of(notice);
+
+        Page<Notice> mockPage = new PageImpl<>(mockList, pageable, mockList.size());
+
+        //mock check
+        when(noticeRepository.findAll(pageable)).thenReturn(mockPage);
+
+        //when
+        Page<NoticeResponseDto> notices = noticeService.getNotices(pageable);
+
+        //then
+        assertNotNull(notices);
+        assertEquals(1, notices.getTotalElements());
+        assertEquals(noticeId, notices.getContent().get(0).getId());
+        assertEquals("test", notices.getContent().get(0).getTitle());
+
+        //Mock 검증
+        verify(noticeRepository, times(1)).findAll(pageable);
     }
 
     @Test
