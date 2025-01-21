@@ -25,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -174,6 +175,49 @@ class NoticeServiceTest {
 
     @Test
     void deleteNotice() {
+        Long noticeId = 1L;
+        Long attachmentId = 1L;
+        Long userId = 2L;
+
+        User user = new User();
+        user.setId(userId);
+        user.setRole(Role.ADMIN);
+        user.setUsername("admin");
+        user.setEmail("user@example.com");
+        user.setUsername(passwordEncoder.encode("eddy"));
+
+        Attachment attachment = new Attachment();
+        attachment.setId(attachmentId);
+        attachment.setFileUrl("test.jpg");
+        attachment.setFileName("test.jpg");
+        attachment.setStatus(AttachmentStatus.ACTIVE);
+
+        Notice notice = new Notice();
+        notice.setId(noticeId);
+        notice.setTitle("test");
+        notice.setContent("test contents");
+        notice.setStartDate(LocalDateTime.now().minusDays(1));
+        notice.setEndDate(LocalDateTime.now().plusDays(1));
+        notice.setCreatedUser(
+                user
+        );
+        notice.setAttachments(
+                List.of(
+                        attachment
+                )
+        );
+        notice.setStatus(NoticeStatus.ACTIVE);
+
+        //when
+        when(noticeRepository.findById(noticeId)).thenReturn(Optional.of(notice));
+        noticeService.deleteNotice(noticeId);
+
+        //then
+        assertEquals(notice.getDeletedAt().format(DateTimeFormatter.ofPattern(datetimeFormat)),
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern(datetimeFormat)));
+
+        assertEquals(notice.getStatus(), NoticeStatus.DELETED);
+        assertEquals(attachment.getStatus(), AttachmentStatus.DELETED);
     }
 
     @Test
