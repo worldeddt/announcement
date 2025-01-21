@@ -3,6 +3,7 @@ package api.announcement.services;
 import api.announcement.controller.dto.AttachmentRequestDto;
 import api.announcement.controller.dto.NoticeRequestDto;
 import api.announcement.controller.dto.NoticeResponseDto;
+import api.announcement.controller.dto.NoticeUpdateRequestDto;
 import api.announcement.entities.Attachment;
 import api.announcement.entities.Notice;
 import api.announcement.entities.User;
@@ -11,6 +12,7 @@ import api.announcement.enums.NoticeStatus;
 import api.announcement.enums.Role;
 import api.announcement.repositories.NoticeRepository;
 import api.announcement.repositories.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +28,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -236,5 +237,64 @@ class NoticeServiceTest {
 
     @Test
     void updateNotice() {
+        //Mock data
+        Long noticeId = 1L;
+        Long attachmentId = 1L;
+        Long userId = 2L;
+
+        User user = new User();
+        user.setId(userId);
+        user.setRole(Role.ADMIN);
+        user.setUsername("admin");
+        user.setEmail("user@example.com");
+        user.setUsername(passwordEncoder.encode("eddy"));
+
+        Attachment attachment = new Attachment();
+        attachment.setId(attachmentId);
+        attachment.setFileUrl("test.jpg");
+        attachment.setFileName("test.jpg");
+        attachment.setStatus(AttachmentStatus.ACTIVE);
+
+        Notice notice = new Notice();
+        notice.setId(noticeId);
+        notice.setTitle("test");
+        notice.setContent("test contents");
+        notice.setStartDate(LocalDateTime.now().minusDays(1));
+        notice.setEndDate(LocalDateTime.now().plusDays(1));
+        notice.setCreatedUser(
+                user
+        );
+        notice.setAttachments(
+                List.of(
+                        attachment
+                )
+        );
+        notice.setStatus(NoticeStatus.ACTIVE);
+
+        NoticeUpdateRequestDto noticeUpdateRequestDto =
+                NoticeUpdateRequestDto.builder()
+                        .title("update test")
+                        .content("update test contents")
+                        .startDate(LocalDateTime.now().minusDays(1))
+                        .endDate(LocalDateTime.now().plusDays(1))
+                        .updateUserId(userId)
+                        .viewed(true)
+                        .build();
+
+
+        //Mock Repository
+        when(noticeRepository.findById(noticeId)).thenReturn(Optional.of(notice));
+
+        //when
+        NoticeResponseDto noticeResponseDto = noticeService.updateNotice(noticeId, noticeUpdateRequestDto);
+
+        //then
+        assertEquals(noticeResponseDto.getTitle(), noticeUpdateRequestDto.getTitle());
+        assertEquals(noticeResponseDto.getContent(), noticeUpdateRequestDto.getContent());
+
+        verify(redisService, times(1)).putValue(
+                eq(NOTICE_CACHE_PREFIX + noticeId), any(Notice.class), eq(90L));
+
+        verify(noticeRepository, times(1)).findById(noticeId);
     }
 }

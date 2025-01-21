@@ -106,7 +106,7 @@ public class NoticeService {
 
         Notice updatedNotice = notice.toUpdate(requestDto);
 
-        redisService.putValue(NOTICE_CACHE_PREFIX + noticeId, updatedNotice, 30);
+        redisService.putValue(NOTICE_CACHE_PREFIX + noticeId, updatedNotice, 90);
 
         return notice.toDto();
     }
