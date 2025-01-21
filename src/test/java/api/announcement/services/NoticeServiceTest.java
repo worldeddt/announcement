@@ -31,6 +31,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -152,7 +153,7 @@ class NoticeServiceTest {
     @Test
     void getNoticeById() {
         //Mock Repository
-        when(noticeRepository.findById(noticeId)).thenReturn(Optional.of(notice));
+        when(noticeRepository.findByIdAndStatus(noticeId, NoticeStatus.ACTIVE)).thenReturn(Optional.of(notice));
         when(redisService.hasKey(NOTICE_CACHE_PREFIX + noticeId)).thenReturn(true);
         when(redisService.getValue(NOTICE_CACHE_PREFIX + noticeId)).thenReturn(notice);
 
@@ -168,13 +169,13 @@ class NoticeServiceTest {
         //Mock 검증
         verify(redisService, times(1)).hasKey(NOTICE_CACHE_PREFIX + noticeId);
         verify(redisService, times(1)).getValue(NOTICE_CACHE_PREFIX + noticeId);
-        verify(noticeRepository, never()).findById(anyLong());
+        verify(noticeRepository, never()).findByIdAndStatus(anyLong(), any(NoticeStatus.class));
     }
 
     @Test
     void deleteNotice() {
         //when
-        when(noticeRepository.findById(noticeId)).thenReturn(Optional.of(notice));
+        when(noticeRepository.findByIdAndStatus(noticeId, NoticeStatus.ACTIVE)).thenReturn(Optional.of(notice));
         noticeService.deleteNotice(noticeId);
 
         //then
@@ -194,7 +195,7 @@ class NoticeServiceTest {
         Page<Notice> mockPage = new PageImpl<>(mockList, pageable, mockList.size());
 
         //mock check
-        when(noticeRepository.findAll(pageable)).thenReturn(mockPage);
+        when(noticeRepository.findAllByStatus(pageable, NoticeStatus.ACTIVE)).thenReturn(mockPage);
 
         //when
         Page<NoticeResponseDto> notices = noticeService.getNotices(pageable);
@@ -206,13 +207,13 @@ class NoticeServiceTest {
         assertEquals("test", notices.getContent().get(0).getTitle());
 
         //Mock 검증
-        verify(noticeRepository, times(1)).findAll(pageable);
+        verify(noticeRepository, times(1)).findAllByStatus(pageable, NoticeStatus.ACTIVE);
     }
 
     @Test
     void updateNotice() {
         //Mock Repository
-        when(noticeRepository.findById(noticeId)).thenReturn(Optional.of(notice));
+        when(noticeRepository.findByIdAndStatus(noticeId, NoticeStatus.ACTIVE)).thenReturn(Optional.of(notice));
 
         //when
         NoticeResponseDto noticeResponseDto = noticeService.updateNotice(noticeId, noticeUpdateRequestDto);
@@ -224,6 +225,6 @@ class NoticeServiceTest {
         verify(redisService, times(1)).putValue(
                 eq(NOTICE_CACHE_PREFIX + noticeId), any(Notice.class), eq(90L));
 
-        verify(noticeRepository, times(1)).findById(noticeId);
+        verify(noticeRepository, times(1)).findByIdAndStatus(noticeId, NoticeStatus.ACTIVE);
     }
 }

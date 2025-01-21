@@ -5,14 +5,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 class AnnouncementApplicationTests {
-    // 기본 crud
-    // 첨부 파일 등록
-    // 공지사항 글 내 특수문자 필터링
-    // dto 검증
-    // paging 검증
-    // 동시성 체크
-    // 캐시 체크
-    // delete 후 호출 체크
+    // todo 기본 crud
+    // todo 첨부 파일 등록
+    // todo 공지사항 글 내 특수문자 필터링
+    // todo dto 검증
+    // todo paging 검증
+    // todo 동시성 체크
+    // todo 캐시 체크
+    // todo delete 후 호출 체크
 
     @Test
     void contextLoads() {

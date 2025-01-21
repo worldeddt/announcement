@@ -68,7 +68,7 @@ public class NoticeService {
             return value.toDto();
         }
 
-        Notice notice = noticeRepository.findById(noticeId)
+        Notice notice = noticeRepository.findByIdAndStatus(noticeId, NoticeStatus.ACTIVE)
                 .orElseThrow(ErrorCode.NOT_FOUND_NOTICE::build);
 
         redisService.putValue(NOTICE_CACHE_PREFIX+noticeId, notice, 30);
@@ -78,7 +78,7 @@ public class NoticeService {
 
     @Transactional(rollbackFor = Exception.class)
     public void deleteNotice(Long noticeId) {
-        Notice notice = noticeRepository.findById(noticeId)
+        Notice notice = noticeRepository.findByIdAndStatus(noticeId, NoticeStatus.ACTIVE)
                 .orElseThrow(ErrorCode.NOT_FOUND_NOTICE::build);
 
         notice.setDeletedAt(LocalDateTime.now());
@@ -95,13 +95,13 @@ public class NoticeService {
     }
 
     public Page<NoticeResponseDto> getNotices(Pageable pageable) {
-        Page<Notice> allNotice = noticeRepository.findAll(pageable);
+        Page<Notice> allNotice = noticeRepository.findAllByStatus(pageable, NoticeStatus.ACTIVE);
         return allNotice.map(Notice::toDto);
     }
 
     @Transactional(rollbackFor = Exception.class)
     public NoticeResponseDto updateNotice(Long noticeId, NoticeUpdateRequestDto requestDto) {
-        Notice notice = noticeRepository.findById(noticeId)
+        Notice notice = noticeRepository.findByIdAndStatus(noticeId, NoticeStatus.ACTIVE)
                 .orElseThrow(ErrorCode.NOT_FOUND_NOTICE::build);
 
         Notice updatedNotice = notice.toUpdate(requestDto);
