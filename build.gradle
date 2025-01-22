@@ -37,6 +37,7 @@ dependencies {
     implementation 'org.springframework.security:spring-security-crypto:6.4.2'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.2'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
 }
 
 tasks.named('test') {
