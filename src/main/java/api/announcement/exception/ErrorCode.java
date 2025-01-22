@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum ErrorCode {
     IN_VALID_ARGUMENT(HttpStatus.BAD_REQUEST, "NO_0011", "find invalid argument"),
+    DELETED_USER(HttpStatus.BAD_REQUEST, "NO_0007", "deleted user"),
     NOT_UPDATE_ROLE_OF_NOTICE(HttpStatus.BAD_REQUEST, "NO_0006", "is not update role of notice"),
     NOT_DELETE_ROLE_OF_NOTICE(HttpStatus.BAD_REQUEST, "NO_0005", "is not delete role of notice"),
     NOT_CREATE_ROLE_OF_NOTICE(HttpStatus.BAD_REQUEST, "NO_0004", "is not create role of notice"),
