@@ -4,6 +4,7 @@ import api.announcement.controller.dto.AttachmentResponseDto;
 import api.announcement.controller.dto.AttachmentUpdateRequestDto;
 import api.announcement.entities.Attachment;
 import api.announcement.entities.Notice;
+import api.announcement.exception.NoticeExeption;
 import api.announcement.repositories.AttachmentRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -70,6 +71,28 @@ class AttachmentServiceTest {
         // Verify Redis interactions
         verify(redisService, times(1)).hasKey(NOTICE_CACHE_PREFIX + noticeId);
         verify(redisService, times(1)).deleteValue(NOTICE_CACHE_PREFIX + noticeId);
+    }
+
+    @Test
+    void udpateShouldThrowExceptionWhenAttachmentNotFound() {
+
+        Long attachmentId = 1L;
+
+        AttachmentUpdateRequestDto updateRequestDto = AttachmentUpdateRequestDto.builder()
+                .fileName("test file name")
+                .fileUrl("test file url")
+                .updateUserId(1L)
+                .build();
+
+        when(attachmentRepository.findById(attachmentId)).thenReturn(Optional.empty());
+        NoticeExeption exception = assertThrows(NoticeExeption.class ,
+                () -> attachmentService.update(attachmentId, updateRequestDto));
+
+        assertEquals("not found attachment", exception.getReason());
+
+        verify(redisService, never()).hasKey(NOTICE_CACHE_PREFIX + attachmentId);
+        verify(redisService, never()).deleteValue(NOTICE_CACHE_PREFIX + attachmentId);
+        verify(attachmentRepository, times(1)).findById(attachmentId);
     }
 
 }
