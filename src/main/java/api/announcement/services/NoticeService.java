@@ -39,7 +39,7 @@ public class NoticeService {
         User user = userRepository.findById(requestDto.getCreateId())
                 .orElseThrow(ErrorCode.NOT_FOUND_USER::build);
 
-        if (user.getRole().equals(Role.USER)) NOT_CREATE_ROLE_OF_NOTICE.build();
+        if (user.getRole().equals(Role.USER)) throw NOT_CREATE_ROLE_OF_NOTICE.build();
 
         Notice notice = new Notice();
         notice.setTitle(requestDto.getTitle());
@@ -86,7 +86,7 @@ public class NoticeService {
         User user = userRepository.findById(noticeDeleteDto.getUserId())
                 .orElseThrow(ErrorCode.NOT_FOUND_USER::build);
 
-        if (user.getRole().equals(Role.USER)) NOT_DELETE_ROLE_OF_NOTICE.build();
+        if (user.getRole().equals(Role.USER)) throw NOT_DELETE_ROLE_OF_NOTICE.build();
 
         Notice notice = noticeRepository.findByIdAndStatus(noticeId, NoticeStatus.ACTIVE)
                 .orElseThrow(ErrorCode.NOT_FOUND_NOTICE::build);
@@ -114,7 +114,7 @@ public class NoticeService {
         User user = userRepository.findById(noticeUpdateRequestDto.getUpdateUserId())
                 .orElseThrow(ErrorCode.NOT_FOUND_USER::build);
 
-        if (user.getRole().equals(Role.USER)) NOT_UPDATE_ROLE_OF_NOTICE.build();
+        if (user.getRole().equals(Role.USER)) throw NOT_UPDATE_ROLE_OF_NOTICE.build();
 
         Notice notice = noticeRepository.findByIdAndStatus(noticeId, NoticeStatus.ACTIVE)
                 .orElseThrow(ErrorCode.NOT_FOUND_NOTICE::build);

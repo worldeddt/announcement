@@ -49,7 +49,7 @@ public class Notice extends BaseEntity {
     @Column(nullable = false)
     private LocalDateTime endDate;
 
-    private int viewCount = 0;
+    private int viewCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_user")
@@ -60,7 +60,7 @@ public class Notice extends BaseEntity {
     @OneToMany(mappedBy = "notice",
             cascade = {CascadeType.MERGE, CascadeType.PERSIST},
             orphanRemoval = true)
-    private List<Attachment> attachments = new ArrayList<>();
+    private List<Attachment> attachments;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

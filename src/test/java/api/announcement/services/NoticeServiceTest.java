@@ -56,7 +56,9 @@ class NoticeServiceTest {
     Long noticeId;
     Long attachmentId;
     Long userId;
+    Long userRoleOfUserId;
     User user;
+    User userRoleOfUser;
     Notice notice;
     Attachment attachment;
     NoticeUpdateRequestDto noticeUpdateRequestDto;
@@ -70,10 +72,18 @@ class NoticeServiceTest {
         noticeId = 1L;
         attachmentId = 1L;
         userId = 2L;
+        userRoleOfUserId = 3L;
 
         user = new User();
         user.setId(userId);
         user.setRole(Role.ADMIN);
+        user.setUsername("admin");
+        user.setEmail("user@example.com");
+        user.setUsername(passwordEncoder.encode("eddy"));
+
+        userRoleOfUser = new User();
+        user.setId(userRoleOfUserId);
+        user.setRole(Role.USER);
         user.setUsername("admin");
         user.setEmail("user@example.com");
         user.setUsername(passwordEncoder.encode("eddy"));
@@ -256,5 +266,26 @@ class NoticeServiceTest {
                 eq(NOTICE_CACHE_PREFIX + noticeId), any(Notice.class), eq(90L));
 
         verify(noticeRepository, times(1)).findByIdAndStatus(noticeId, NoticeStatus.ACTIVE);
+    }
+
+    @Test
+    void createNoticeUserRoleOfUser() {
+
+        userRoleOfUser.setRole(Role.USER);
+
+        noticeRequestDto = noticeRequestDto.toBuilder()
+                .createId(userRoleOfUser.getId())
+                .build();
+
+        // Mock Repository
+        when(userRepository.findById(userRoleOfUser.getId())).thenReturn(Optional.of(userRoleOfUser));
+
+        // Then
+        NoticeExeption noticeExeption =
+                assertThrows(NoticeExeption.class, () -> noticeService.createNotice(noticeRequestDto));
+        assertEquals("is not create role of notice", noticeExeption.getReason());
+
+        // Mock 동작 검증
+        verify(userRepository, times(1)).findById(userRoleOfUser.getId());
     }
 }
