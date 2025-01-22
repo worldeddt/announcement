@@ -74,7 +74,7 @@ class AttachmentServiceTest {
     }
 
     @Test
-    void udpateShouldThrowExceptionWhenAttachmentNotFound() {
+    void updateShouldThrowExceptionWhenAttachmentNotFound() {
 
         Long attachmentId = 1L;
 

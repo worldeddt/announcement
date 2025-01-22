@@ -1,9 +1,6 @@
 package api.announcement.services;
 
-import api.announcement.controller.dto.AttachmentRequestDto;
-import api.announcement.controller.dto.NoticeRequestDto;
-import api.announcement.controller.dto.NoticeResponseDto;
-import api.announcement.controller.dto.NoticeUpdateRequestDto;
+import api.announcement.controller.dto.*;
 import api.announcement.entities.Attachment;
 import api.announcement.entities.Notice;
 import api.announcement.entities.User;
@@ -64,6 +61,7 @@ class NoticeServiceTest {
     Attachment attachment;
     NoticeUpdateRequestDto noticeUpdateRequestDto;
     NoticeRequestDto noticeRequestDto;
+    NoticeDeleteDto noticeDeleteDto;
     AttachmentRequestDto attachmentRequestDto;
 
     @BeforeEach
@@ -126,6 +124,11 @@ class NoticeServiceTest {
                         .endDate(LocalDateTime.now().plusDays(1))
                         .startDate(LocalDateTime.now().minusDays(1))
                         .build();
+
+        noticeDeleteDto =
+                NoticeDeleteDto.builder()
+                        .userId(user.getId())
+                        .build();
     }
 
 
@@ -177,8 +180,9 @@ class NoticeServiceTest {
     void deleteNotice() {
         //when
         when(noticeRepository.findByIdAndStatus(noticeId, NoticeStatus.ACTIVE)).thenReturn(Optional.of(notice));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-        noticeService.deleteNotice(noticeId);
+        noticeService.deleteNotice(noticeId, noticeDeleteDto);
 
         NoticeResponseDto noticeById = noticeService.getNoticeById(noticeId);
 
@@ -199,8 +203,9 @@ class NoticeServiceTest {
     void findNoticeAfterDelete() {
 
         when(noticeRepository.findByIdAndStatus(noticeId, NoticeStatus.ACTIVE)).thenReturn(Optional.of(notice));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-        noticeService.deleteNotice(noticeId);
+        noticeService.deleteNotice(noticeId, noticeDeleteDto);
 
         when(noticeRepository.findByIdAndStatus(noticeId, NoticeStatus.ACTIVE)).thenReturn(Optional.empty());
 

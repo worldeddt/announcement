@@ -1,6 +1,7 @@
 package api.announcement.controller;
 
 
+import api.announcement.controller.dto.NoticeDeleteDto;
 import api.announcement.controller.dto.NoticeRequestDto;
 import api.announcement.controller.dto.NoticeResponseDto;
 import api.announcement.controller.dto.NoticeUpdateRequestDto;
@@ -31,8 +32,8 @@ public class NoticeController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
-        noticeService.deleteNotice(id);
+    public ResponseEntity<?> delete(@PathVariable Long id, @RequestBody NoticeDeleteDto noticeRequestDto) {
+        noticeService.deleteNotice(id, noticeRequestDto);
         return ResponseEntity.ok().build();
     }
 

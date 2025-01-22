@@ -1,10 +1,7 @@
 package api.announcement.services;
 
 
-import api.announcement.controller.dto.AttachmentRequestDto;
-import api.announcement.controller.dto.NoticeRequestDto;
-import api.announcement.controller.dto.NoticeResponseDto;
-import api.announcement.controller.dto.NoticeUpdateRequestDto;
+import api.announcement.controller.dto.*;
 import api.announcement.entities.Notice;
 import api.announcement.entities.User;
 import api.announcement.enums.NoticeStatus;
@@ -101,14 +98,25 @@ public class CacheTest {
     void deleteNoticeShouldRemoveFromRedis() {
         // Given
         Long noticeId = 1L;
+        Long userId = 1L;
+
         Notice notice = new Notice();
         notice.setId(noticeId);
         notice.setStatus(NoticeStatus.ACTIVE);
 
+        NoticeDeleteDto noticeDeleteDto = NoticeDeleteDto.builder()
+                .userId(userId)
+                .build();
+
+        User user = new User();
+        user.setId(userId);
+        user.setRole(Role.ADMIN);
+
         when(noticeRepository.findByIdAndStatus(noticeId, NoticeStatus.ACTIVE)).thenReturn(Optional.of(notice));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
         // When
-        noticeService.deleteNotice(noticeId);
+        noticeService.deleteNotice(noticeId, noticeDeleteDto);
 
         // Then
         verify(redisService, times(1)).deleteValue(NOTICE_CACHE_PREFIX + noticeId);
