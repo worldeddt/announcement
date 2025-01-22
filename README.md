@@ -38,7 +38,12 @@ redis
 hibernate 6.6.4
 
 ---
-## 설계
+## 설계 및 주요사항
+
+### ✅엔티티 관계 
+공지사항과 첨부파일의 관계는 1:N 관계로 하나의 공지사항에 여러개의 첨부파일이
+
+존재할 것을 염두하고 설계하였습니다.
 
 ### ✅대용량
 redis 의 캐시를 활용, 데이터 조회 부하 분산 적용하였습니다. 
@@ -79,13 +84,19 @@ AttachmentController.update
 ---
 ## 폴더 구조
 announcement  
-│├── controller  
-│├── entities  
-│├── repositories  
-│└── services  
+│  ├── components  
+│  ├── controller  
+│      └── dto  
+│  ├── config  
+│  ├── entities  
+│  ├── enums  
+│  ├── exception  
+│  ├── repositories  
+│  └── services  
 ├── AnnouncementApplication.java  
 
 controller : controller 클래스  
+dto : controller 접근 layer dto 디렉토리
 services : 비즈니스 로직 등이 모여 있는 클래스  
 repositories : database 접근 객체  
 entities : 엔티티 클래스 디렉토리
