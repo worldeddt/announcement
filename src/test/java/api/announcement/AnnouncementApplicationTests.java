@@ -11,8 +11,8 @@ class AnnouncementApplicationTests {
     // [x] todo dto 검증
     // [x] todo paging 검증
     // todo 동시성 체크
-    // todo 캐시 체크
-    // todo delete 후 호출 체크
+    // todo 캐시 체크 > 동적 테스트 필요
+    // [x] todo delete 후 호출 체크 > 동적 호출 테스트
     // [x] todo datetime 들어올때 localdatetime 으로 들어올텐데 해당 부분 체크할 것.
     // todo user가 ADMIN, MANAGER 이 아닐 때 등록 예외처리
 
