@@ -7,6 +7,7 @@ import api.announcement.controller.dto.NoticeResponseDto;
 import api.announcement.entities.Notice;
 import api.announcement.entities.User;
 import api.announcement.enums.Role;
+import api.announcement.enums.UserStatus;
 import api.announcement.repositories.NoticeRepository;
 import api.announcement.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,7 +63,7 @@ public class NoticeServiceConcurrencyTest {
                 "testUser",
                 "test@example.com",
                 "password",
-                Role.ADMIN);
+                Role.ADMIN, UserStatus.ACTIVE);
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 

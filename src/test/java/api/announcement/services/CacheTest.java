@@ -6,6 +6,7 @@ import api.announcement.entities.Notice;
 import api.announcement.entities.User;
 import api.announcement.enums.NoticeStatus;
 import api.announcement.enums.Role;
+import api.announcement.enums.UserStatus;
 import api.announcement.repositories.NoticeRepository;
 import api.announcement.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -42,7 +43,14 @@ public class CacheTest {
     @Test
     void createNoticeShouldStoreInRedis() {
         // Given
-        User user = new User(1L, "testUser", "test@example.com", "password", Role.ADMIN);
+        User user = new User(
+                1L,
+                "testUser",
+                "test@example.com",
+                "password",
+                Role.ADMIN,
+                UserStatus.ACTIVE
+        );
         NoticeRequestDto requestDto = NoticeRequestDto.builder()
                 .title("Test Notice")
                 .content("Test Content")

@@ -2,6 +2,7 @@ package api.announcement.controller.dto;
 
 import api.announcement.entities.User;
 import api.announcement.enums.Role;
+import api.announcement.enums.UserStatus;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -15,7 +16,13 @@ class NoticeResponseDtoTest {
     void shouldCreateNoticeResponseDto() {
         // Given
         LocalDateTime now = LocalDateTime.now();
-        User createdUser = new User(1L, "eddy", "eddy@example.com", "password",  Role.ADMIN);
+        User createdUser = new User(
+                1L,
+                "eddy",
+                "eddy@example.com",
+                "password",
+                Role.ADMIN,
+                UserStatus.ACTIVE);
         List<AttachmentResponseDto> attachments = List.of(
                 new AttachmentResponseDto(1L, "file1.jpg", "/path/file1.jpg"),
                 new AttachmentResponseDto(2L, "file2.jpg", "/path/file2.jpg")

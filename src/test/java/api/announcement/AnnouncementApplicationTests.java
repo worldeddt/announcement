@@ -15,7 +15,7 @@ class AnnouncementApplicationTests {
     // [x] todo delete 후 호출 체크 > 동적 호출 테스트
     // [x] todo datetime 들어올때 localdatetime 으로 들어올텐데 해당 부분 체크할 것.
     // [x] todo user가 ADMIN, MANAGER 이 아닐 때 등록 예외처리
-    // todo user 관리 포인트.
+    // [x] todo user 관리 포인트.
     // todo 부하 테스트 비교분
     // todo readme 정리
 
