@@ -176,14 +176,21 @@ class NoticeServiceTest {
     void deleteNotice() {
         //when
         when(noticeRepository.findByIdAndStatus(noticeId, NoticeStatus.ACTIVE)).thenReturn(Optional.of(notice));
+
         noticeService.deleteNotice(noticeId);
 
+        NoticeResponseDto noticeById = noticeService.getNoticeById(noticeId);
+
         //then
+        assertNotNull(notice.getDeletedAt());
         assertEquals(notice.getDeletedAt().format(DateTimeFormatter.ofPattern(datetimeFormat)),
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern(datetimeFormat)));
 
         assertEquals(notice.getStatus(), NoticeStatus.DELETED);
         assertEquals(attachment.getStatus(), AttachmentStatus.DELETED);
+
+        // Redis 캐시 삭제 검증
+        verify(redisService, times(1)).deleteValue(NOTICE_CACHE_PREFIX + noticeId);
     }
 
     @Test

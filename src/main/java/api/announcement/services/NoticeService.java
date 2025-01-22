@@ -18,7 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,7 +31,7 @@ public class NoticeService {
     private static final String NOTICE_CACHE_PREFIX = "notice:";
 
     @Transactional(rollbackFor = Exception.class)
-    public NoticeResponseDto createNotice(NoticeRequestDto requestDto) {
+    public synchronized NoticeResponseDto createNotice(NoticeRequestDto requestDto) {
         User user = userRepository.findById(requestDto.getCreateId())
                 .orElseThrow(ErrorCode.NOT_FOUND_USER::build);
 
@@ -77,7 +76,7 @@ public class NoticeService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteNotice(Long noticeId) {
+    public synchronized void deleteNotice(Long noticeId) {
         Notice notice = noticeRepository.findByIdAndStatus(noticeId, NoticeStatus.ACTIVE)
                 .orElseThrow(ErrorCode.NOT_FOUND_NOTICE::build);
 
@@ -100,7 +99,7 @@ public class NoticeService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public NoticeResponseDto updateNotice(Long noticeId, NoticeUpdateRequestDto requestDto) {
+    public synchronized NoticeResponseDto updateNotice(Long noticeId, NoticeUpdateRequestDto requestDto) {
         Notice notice = noticeRepository.findByIdAndStatus(noticeId, NoticeStatus.ACTIVE)
                 .orElseThrow(ErrorCode.NOT_FOUND_NOTICE::build);
 
