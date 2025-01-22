@@ -1,11 +1,12 @@
 package api.announcement.controller.dto;
 
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 @Getter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserCreateRequestDto {
     private String username;
     private String email;

@@ -4,14 +4,18 @@ package api.announcement.controller.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
 @Builder(toBuilder = true)
+@AllArgsConstructor
+@NoArgsConstructor
 public class NoticeRequestDto {
     @NotBlank
     private String title;
