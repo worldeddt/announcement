@@ -10,6 +10,7 @@ import api.announcement.entities.User;
 import api.announcement.enums.AttachmentStatus;
 import api.announcement.enums.NoticeStatus;
 import api.announcement.enums.Role;
+import api.announcement.exception.NoticeExeption;
 import api.announcement.repositories.NoticeRepository;
 import api.announcement.repositories.UserRepository;
 import org.junit.jupiter.api.Assertions;
@@ -192,6 +193,23 @@ class NoticeServiceTest {
         // Redis 캐시 삭제 검증
         verify(redisService, times(1)).deleteValue(NOTICE_CACHE_PREFIX + noticeId);
     }
+
+
+    @Test
+    void findNoticeAfterDelete() {
+
+        when(noticeRepository.findByIdAndStatus(noticeId, NoticeStatus.ACTIVE)).thenReturn(Optional.of(notice));
+
+        noticeService.deleteNotice(noticeId);
+
+        when(noticeRepository.findByIdAndStatus(noticeId, NoticeStatus.ACTIVE)).thenReturn(Optional.empty());
+
+        NoticeExeption noticeExeption = assertThrows(NoticeExeption.class ,
+                () -> noticeService.getNoticeById(noticeId));
+
+        assertEquals("not found notice", noticeExeption.getReason());
+    }
+
 
     @Test
     void getNotices() {
