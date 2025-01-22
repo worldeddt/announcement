@@ -22,7 +22,7 @@ class AttachmentUpdateRequestDtoTest {
     }
 
     @Test
-    void validDto_ShouldPassValidation() {
+    void validDtoShouldPassValidation() {
         // Given
         AttachmentUpdateRequestDto dto = AttachmentUpdateRequestDto.builder()
                 .fileName("example.jpg")
@@ -38,7 +38,7 @@ class AttachmentUpdateRequestDtoTest {
     }
 
     @Test
-    void missingUpdateUserId_ShouldFailValidation() {
+    void missingUpdateUserIdShouldFailValidation() {
         // Given
         AttachmentUpdateRequestDto dto = AttachmentUpdateRequestDto.builder()
                 .fileName("example.jpg")

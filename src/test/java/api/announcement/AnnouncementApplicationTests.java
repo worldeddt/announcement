@@ -13,6 +13,7 @@ class AnnouncementApplicationTests {
     // todo 동시성 체크
     // todo 캐시 체크
     // todo delete 후 호출 체크
+    // todo datetime 들어올때 localdatetime 으로 들어올텐데 해당 부분 체크할 것.
 
     @Test
     void contextLoads() {
