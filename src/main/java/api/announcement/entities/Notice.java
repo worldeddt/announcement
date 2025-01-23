@@ -62,7 +62,7 @@ public class Notice extends BaseEntity implements Serializable {
 
     @OneToMany(mappedBy = "notice",
             cascade = {CascadeType.MERGE, CascadeType.PERSIST},
-            orphanRemoval = true, fetch = FetchType.EAGER)
+            orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Attachment> attachments;
 

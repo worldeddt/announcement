@@ -15,6 +15,7 @@ import api.announcement.exception.ErrorCode;
 import api.announcement.repositories.NoticeRepository;
 import api.announcement.repositories.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
@@ -65,23 +66,22 @@ public class NoticeService {
 
         Notice saveNotice = noticeRepository.save(notice);
 
-        redisService.putValue(NOTICE_CACHE_PREFIX+saveNotice.getId(), saveNotice);
+        redisService.putValue(NOTICE_CACHE_PREFIX+saveNotice.getId(), saveNotice.toDto());
 
         return notice.toDto();
     }
 
     public NoticeResponseDto getNoticeById(Long noticeId) {
         if (redisService.hasKey(NOTICE_CACHE_PREFIX+noticeId)) {
-            Notice value =
-                    new ObjectMapper()
-                            .convertValue(redisService.getValue(NOTICE_CACHE_PREFIX + noticeId), Notice.class);
-            return value.toDto();
+            return new ObjectMapper()
+                    .registerModule(new JavaTimeModule())
+                            .convertValue(redisService.getValue(NOTICE_CACHE_PREFIX + noticeId), NoticeResponseDto.class);
         }
 
         Notice notice = noticeRepository.findByIdAndStatus(noticeId, NoticeStatus.ACTIVE)
                 .orElseThrow(ErrorCode.NOT_FOUND_NOTICE::build);
 
-        redisService.putValue(NOTICE_CACHE_PREFIX+noticeId, notice);
+        redisService.putValue(NOTICE_CACHE_PREFIX+noticeId, notice.toDto());
 
         return notice.toDto();
     }
@@ -126,7 +126,7 @@ public class NoticeService {
 
         Notice updatedNotice = notice.toUpdate(noticeUpdateRequestDto);
 
-        redisService.putValue(NOTICE_CACHE_PREFIX + noticeId, updatedNotice);
+        redisService.putValue(NOTICE_CACHE_PREFIX + noticeId, updatedNotice.toDto());
 
         return notice.toDto();
     }
