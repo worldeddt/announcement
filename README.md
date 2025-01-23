@@ -25,9 +25,75 @@ docker-compose up -d
 이때는 컨테이너를 재 실행 시켜주시기 바랍니다.
 
 1. 먼저 user 포인트 호출로 사용자 생성을 해줍니다. (이때 권한은 ADMIN 권한으로 생성합니다.)
+
+
+```bash
+curl --location 'localhost:8080/user' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "username": "eddy",
+    "email" : "ktest92@gmail.com",
+    "password" : "eddy",
+    "role" : "ADMIN"
+}'
+```
 2. notice 포인트를 호출하여 공지사항을 생성합니다. 1번에서 생성한 user index 값을 동봉하여 호출합니다.
 
 
+```bash
+curl --location 'localhost:8080/notice' \
+--header 'Content-Type: application/json' \
+--data '{
+    "title" : "test 1",
+    "content" : "test content",
+    "startDate" : "2025-01-23 00:00:00",
+    "endDate" : "2025-01-25 00:00:00",
+    "attachments" : {
+        "fileName" : "test attach 1",
+        "filePath" : "test attach path 1"
+    },
+    "createId" : 1
+}'
+```
+
+3. 수정 시 아래와 같이 호출합니다.
+
+
+```bash
+curl --location --request PUT 'localhost:8080/notice/2' \
+--header 'Content-Type: application/json' \
+--data '{
+    "title": "update title",
+    "content": "update title content",
+    "startDate" : "2025-01-24 00:00:00",
+    "endDate" : "2025-01-26 00:00:00",
+    "updateUserId" : 1,
+    "viewed" : true
+}'
+```
+
+4. 개별 조회
+
+
+```bash 
+curl --location 'localhost:8080/notice/2'
+```
+
+5. 다건 조회는 pageable 도입으로 페이징이 가능하도록 하였습니다.
+
+```bash
+curl --location --max-time 10 'localhost:8080/notice?page=0&size=5&sort=createdAt%2Casc'
+```
+
+6. 삭제
+
+```bash
+curl --location --request DELETE 'localhost:8080/notice/1' \
+--header 'Content-Type: application/json' \
+--data '{
+    "userId" : 1
+}'
+```
 
 ---
 ## 구성
@@ -148,5 +214,5 @@ NoticeServiceConcurrencyTest.class 파일 내 작업 수를 100000,
 | **HTTP 요청 처리량**        | 7131 요청, 23.75 요청/초 | 7118 요청, 23.69 요청/초 | **유사**                          |
 | **Iteration Duration**      | 1s (평균)            | 1s (평균)            | **유사**                          |
 
-- 언뜻보기엔 디비 직접 호출이 결과가 좋아 보이나 성공률에 따른 지표를 파악해야 하기 때문에 
-14236 건 중 6904 만 성공한 디비 직접 호출을 대용량 트래픽에 취약함을 알 수 있었습니다.
+- 언뜻 보기엔 디비 직접 호출이 결과가 좋아 보이나 성공률에 따른 지표를 파악해야 하기 때문에 
+14236 건 중 6904 만 성공한 디비 직접 호출 방식은 대용량 트래픽에 취약함을 알 수 있었습니다.

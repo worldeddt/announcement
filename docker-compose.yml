@@ -24,17 +24,19 @@ services:
       announcement_net:
         ipv4_address: 172.18.0.3
 
-#  announcement:
-#    image: announcement
-#    container_name: announcement_app
-#    ports:
-#      - "8080:8080"
-#    environment:
-#      MARIADB_HOST: 172.18.0.2
-#      REDIS_HOST: 172.18.0.3
-#    networks:
-#      announcement_net:
-#        ipv4_address: 172.18.0.4
+  announcement:
+    image: announcement
+    container_name: announcement_app
+    ports:
+      - "8080:8080"
+    environment:
+      MARIADB_HOST: 172.18.0.2
+      REDIS_HOST: 172.18.0.3
+    depends_on:
+      - db
+    networks:
+      announcement_net:
+        ipv4_address: 172.18.0.4
 
 networks:
   announcement_net:
