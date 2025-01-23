@@ -26,6 +26,11 @@ public class NoticeController {
         return ResponseEntity.ok().body(noticeService.getNoticeById(id));
     }
 
+    @GetMapping("/db/{id}")
+    public ResponseEntity<NoticeResponseDto> getByIdDb(@PathVariable Long id) {
+        return ResponseEntity.ok().body(noticeService.getNoticeByIdDb(id));
+    }
+
     @PostMapping("")
     public ResponseEntity<NoticeResponseDto> post(@RequestBody NoticeRequestDto noticeRequestDto) {
         return ResponseEntity.ok().body(noticeService.createNotice(noticeRequestDto));

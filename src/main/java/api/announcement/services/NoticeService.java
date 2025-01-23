@@ -86,6 +86,13 @@ public class NoticeService {
         return notice.toDto();
     }
 
+    public NoticeResponseDto getNoticeByIdDb(Long noticeId) {
+        Notice notice = noticeRepository.findByIdAndStatus(noticeId, NoticeStatus.ACTIVE)
+                .orElseThrow(ErrorCode.NOT_FOUND_NOTICE::build);
+
+        return notice.toDto();
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public synchronized void deleteNotice(Long noticeId, NoticeDeleteDto noticeDeleteDto) {
         User user = userRepository.findById(noticeDeleteDto.getUserId())

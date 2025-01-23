@@ -4,7 +4,7 @@
 
 ---
 
-## build
+## build & test
 
 docker engine 이 실행되어 있는 상태에서 아래 명령어로 빌드합니다. 
 
@@ -21,6 +21,14 @@ docker-compose build
 docker-compose up -d 
 
 ```
+✅ 컨테이너를 최초 실행 시킬 때 타이밍 이슈로 announcement app 이 실행되지 않을 수 있습니다.
+이때는 컨테이너를 재 실행 시켜주시기 바랍니다.
+
+1. 먼저 user 포인트 호출로 사용자 생성을 해줍니다. (이때 권한은 ADMIN 권한으로 생성합니다.)
+2. notice 포인트를 호출하여 공지사항을 생성합니다. 1번에서 생성한 user index 값을 동봉하여 호출합니다.
+
+
+
 ---
 ## 구성
 
@@ -33,6 +41,12 @@ maria database
 redis
 
 hibernate 6.6.4
+
+## 부하 테스트
+
+k6
+
+influxdb 1.8
 
 ---
 ## 설계 및 주요사항
@@ -109,3 +123,30 @@ NoticeServiceConcurrencyTest.class 파일 내 작업 수를 100000,
 
 진행하였습니다.
 
+---
+## 부하 테스트
+
+캐시를 통한 호출과 그렇지 않은 호출을 비교하여 부하 테스트를 진행하였습니다.
+
+1. 일반 디비를 통한 테스트 
+![dbUseTrafficK6.jpg](src%2Fmain%2Fjava%2Fapi%2Fannouncement%2Fimages%2FdbUseTrafficK6.jpg)
+![dbUseTrafficInfluxDb.jpg](src%2Fmain%2Fjava%2Fapi%2Fannouncement%2Fimages%2FdbUseTrafficInfluxDb.jpg)
+2. redis 캐시 연동 테스트 
+![cacheUseTrafficK6.jpg](src%2Fmain%2Fjava%2Fapi%2Fannouncement%2Fimages%2FcacheUseTrafficK6.jpg)
+![cacheUseTrafficInfluxDb.jpg](src%2Fmain%2Fjava%2Fapi%2Fannouncement%2Fimages%2FcacheUseTrafficInfluxDb.jpg)
+
+### ✅비교 결과
+
+| **지표**                    | **redis 캐시 연동**    | **디비 직접 호출**       | **비교 결과**                     |
+|-----------------------------|--------------------|--------------------|------------------------------------|
+| **Checks 성공률**           | 100% (14262/14262) | 48.49% (6904/14236) | **redis**           |
+| **HTTP 요청 실패율**        | 0.00% (0/7131)     | 100.00% (7118/7118) | **redis**           |
+| **HTTP 응답 시간 (평균)**   | 3.76ms             | 2.95ms             | **디비 직접 호출**           |
+| **HTTP 응답 시간 (최대)**   | 489.48ms           | 306.84ms           | **디비 직접 호출**           |
+| **HTTP 응답 시간 (p90)**    | 5.7ms              | 4.25ms             | **디비 직접 호출**           |
+| **HTTP 응답 시간 (p95)**    | 6.5ms              | 5.31ms             | **디비 직접 호출**           |
+| **HTTP 요청 처리량**        | 7131 요청, 23.75 요청/초 | 7118 요청, 23.69 요청/초 | **유사**                          |
+| **Iteration Duration**      | 1s (평균)            | 1s (평균)            | **유사**                          |
+
+- 언뜻보기엔 디비 직접 호출이 결과가 좋아 보이나 성공률에 따른 지표를 파악해야 하기 때문에 
+14236 건 중 6904 만 성공한 디비 직접 호출을 대용량 트래픽에 취약함을 알 수 있었습니다.

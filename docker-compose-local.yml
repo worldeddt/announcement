@@ -1,0 +1,45 @@
+version: "1.0"
+
+services:
+  db:
+    container_name: announcement_db
+    image: mariadb:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MARIADB_ROOT_PASSWORD: eddy
+    volumes:
+      - ./docker/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: --init-file=/docker-entrypoint-initdb.d/init.sql
+    networks:
+      announcement_net:
+        ipv4_address: 172.18.0.2
+
+  redis:
+    container_name: announcement_redis
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+      announcement_net:
+        ipv4_address: 172.18.0.3
+
+  announcement:
+    image: announcement
+    container_name: announcement_app
+    ports:
+      - "8080:8080"
+    environment:
+      MARIADB_HOST: 172.18.0.2
+      REDIS_HOST: 172.18.0.3
+    networks:
+      announcement_net:
+        ipv4_address: 172.18.0.4
+
+networks:
+  announcement_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
+
