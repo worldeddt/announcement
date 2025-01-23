@@ -71,7 +71,7 @@ public class Notice extends BaseEntity implements Serializable {
     private NoticeStatus status;
 
     public NoticeResponseDto toDto() {
-        return NoticeResponseDto.builder()
+        NoticeResponseDto noticeResponseDto = NoticeResponseDto.builder()
                 .id(this.getId())
                 .title(this.getTitle())
                 .content(this.getContent())
@@ -87,6 +87,19 @@ public class Notice extends BaseEntity implements Serializable {
                                 .toList()
                 )
                 .build();
+
+
+        if (this.getAttachments() != null && !this.getAttachments().isEmpty()) {
+            noticeResponseDto = NoticeResponseDto.builder()
+                    .attachments(
+                            this.getAttachments()
+                                    .stream()
+                                    .map(Attachment::toDto)
+                                    .toList()
+                    ).build();
+        }
+
+        return noticeResponseDto;
     }
 
     public Notice toUpdate(NoticeUpdateRequestDto noticeUpdateRequestDto) {
