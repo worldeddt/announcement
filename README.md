@@ -97,3 +97,15 @@ dto : controller 접근 layer dto 디렉토리
 services : 비즈니스 로직 등이 모여 있는 클래스  
 repositories : database 접근 객체  
 entities : 엔티티 클래스 디렉토리
+
+---
+## 동시성 테스트
+
+대량의 요청이 올 것을 대비하여 로컬에서 테스트 코드를 작성
+
+NoticeServiceConcurrencyTest.class 를 작성하여 동시 스레드 수를 100
+
+작업 수를 100000 으로 잡아 동시 작업 스레드 수를 1000개로 하여 동시성 테스트를 
+
+진행하였습니다.
+
