@@ -14,7 +14,9 @@ import api.announcement.enums.Role;
 import api.announcement.exception.ErrorCode;
 import api.announcement.repositories.NoticeRepository;
 import api.announcement.repositories.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -54,6 +56,7 @@ public class NoticeService {
                     attachment.setFileUrl(attachmentRequestDto.getFilePath());
                     attachment.setFileName(attachmentRequestDto.getFileName());
                     attachment.setNotice(notice);
+                    attachment.setStatus(AttachmentStatus.ACTIVE);
                     return attachment;
                 }).collect(Collectors.toList());
 
@@ -62,21 +65,23 @@ public class NoticeService {
 
         Notice saveNotice = noticeRepository.save(notice);
 
-        redisService.putValue(NOTICE_CACHE_PREFIX+saveNotice.getId(), saveNotice, 30);
+        redisService.putValue(NOTICE_CACHE_PREFIX+saveNotice.getId(), saveNotice);
 
         return notice.toDto();
     }
 
     public NoticeResponseDto getNoticeById(Long noticeId) {
         if (redisService.hasKey(NOTICE_CACHE_PREFIX+noticeId)) {
-            Notice value = (Notice) redisService.getValue(NOTICE_CACHE_PREFIX + noticeId);
+            Notice value =
+                    new ObjectMapper()
+                            .convertValue(redisService.getValue(NOTICE_CACHE_PREFIX + noticeId), Notice.class);
             return value.toDto();
         }
 
         Notice notice = noticeRepository.findByIdAndStatus(noticeId, NoticeStatus.ACTIVE)
                 .orElseThrow(ErrorCode.NOT_FOUND_NOTICE::build);
 
-        redisService.putValue(NOTICE_CACHE_PREFIX+noticeId, notice, 30);
+        redisService.putValue(NOTICE_CACHE_PREFIX+noticeId, notice);
 
         return notice.toDto();
     }
@@ -121,7 +126,7 @@ public class NoticeService {
 
         Notice updatedNotice = notice.toUpdate(noticeUpdateRequestDto);
 
-        redisService.putValue(NOTICE_CACHE_PREFIX + noticeId, updatedNotice, 90);
+        redisService.putValue(NOTICE_CACHE_PREFIX + noticeId, updatedNotice);
 
         return notice.toDto();
     }

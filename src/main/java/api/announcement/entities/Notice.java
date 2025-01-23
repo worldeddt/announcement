@@ -5,6 +5,7 @@ import api.announcement.controller.dto.NoticeResponseDto;
 import api.announcement.controller.dto.NoticeUpdateRequestDto;
 import api.announcement.enums.NoticeStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -12,9 +13,10 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.redis.core.RedisHash;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -24,7 +26,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper=false)
-public class Notice extends BaseEntity {
+@RedisHash(value = "Notice", timeToLive = 180) // TTL: 180초
+public class Notice extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -59,7 +62,8 @@ public class Notice extends BaseEntity {
 
     @OneToMany(mappedBy = "notice",
             cascade = {CascadeType.MERGE, CascadeType.PERSIST},
-            orphanRemoval = true)
+            orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<Attachment> attachments;
 
     @Column(nullable = false)

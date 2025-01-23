@@ -2,6 +2,7 @@ package api.announcement.controller.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -31,6 +32,8 @@ public class NoticeRequestDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endDate;
 
+    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY) // 단일 객체를 배열로 처리
+    @JsonProperty("attachments") // JSON 필드 이름 명시 (필요시)
     private List<AttachmentRequestDto> attachments;
 
     private Long createId;

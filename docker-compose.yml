@@ -23,15 +23,24 @@ services:
     networks:
       - announcement_net
 
-#  announcement:
-#    image: announcement
-#    container_name: announcement_app
-#    ports:
-#      - "8080:8080"
-#    environment:
-#      MARIADB_HOST: db
-#    networks:
-#      - announcement_net
+  announcement:
+    image: announcement
+    container_name: announcement_app
+    ports:
+      - "8080:8080"
+    environment:
+      MARIADB_HOST: db
+    networks:
+      - announcement_net
+
+  k6:
+    image: grafana/k6:latest # K6 공식 Docker 이미지
+    container_name: k6
+    entrypoint: [ "k6", "run", "/scripts/test.js" ] # K6 실행 명령어
+    volumes:
+      - ./scripts:/scripts # 로컬 스크립트 파일을 컨테이너 내부에 마운트
+    networks:
+      - announcement_net
 
 networks:
   announcement_net:

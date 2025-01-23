@@ -9,6 +9,8 @@ spring:
     name: announcement
   data:
     redis:
+      repositories:
+        enabled: false
       host: localhost
       port: 6379
   datasource:
@@ -20,7 +22,13 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MariaDBDialect
+
+cache:
+  custom:
+    redis:
+      default:
+        second: 3600

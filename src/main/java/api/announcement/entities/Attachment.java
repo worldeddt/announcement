@@ -4,8 +4,15 @@ package api.announcement.entities;
 import api.announcement.controller.dto.AttachmentResponseDto;
 import api.announcement.controller.dto.AttachmentUpdateRequestDto;
 import api.announcement.enums.AttachmentStatus;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import org.springframework.data.redis.core.RedisHash;
+
+import java.io.Serializable;
 
 @Data
 @Table
@@ -13,7 +20,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper=false)
-public class Attachment extends BaseEntity {
+@RedisHash(value = "Attachment", timeToLive = 180) // TTL: 180초
+public class Attachment extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,6 +34,7 @@ public class Attachment extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "notice_id")
+    @JsonBackReference
     private Notice notice;
 
     @Column(nullable = false)
