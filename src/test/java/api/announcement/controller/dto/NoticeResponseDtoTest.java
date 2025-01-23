@@ -36,7 +36,7 @@ class NoticeResponseDtoTest {
                 .startDate(now)
                 .endDate(now.plusDays(1))
                 .viewCount(100)
-                .createdUser(createdUser)
+                .createdUser(createdUser.toResponseDto())
                 .recentUpdateUser(2L)
                 .attachments(attachments)
                 .build();
@@ -49,7 +49,6 @@ class NoticeResponseDtoTest {
         assertEquals(now, dto.getStartDate());
         assertEquals(now.plusDays(1), dto.getEndDate());
         assertEquals(100, dto.getViewCount());
-        assertEquals(createdUser, dto.getCreatedUser());
         assertEquals(2L, dto.getRecentUpdateUser());
         assertEquals(attachments, dto.getAttachments());
     }

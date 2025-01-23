@@ -16,6 +16,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -80,6 +82,7 @@ public class CacheTest {
 
         Notice notice = new Notice();
         notice.setId(1L);
+        notice.setCreatedUser(user);
         notice.setAttachments(List.of(attachment));
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
@@ -107,9 +110,17 @@ public class CacheTest {
         attachment.setFileName("test.jpg");
         attachment.setStatus(AttachmentStatus.ACTIVE);
 
+        User user = new User();
+        user.setId(userId);
+        user.setRole(Role.ADMIN);
+        user.setUsername("admin");
+        user.setEmail("user@example.com");
+        user.setUsername("eddy");
+
         Notice notice = new Notice();
         notice.setId(noticeId);
         notice.setTitle("Cached Notice");
+        notice.setCreatedUser(user);
         notice.setAttachments(List.of(attachment));
 
         when(redisService.hasKey(NOTICE_CACHE_PREFIX + noticeId)).thenReturn(true);
@@ -173,14 +184,15 @@ public class CacheTest {
         attachment.setFileName("test.jpg");
         attachment.setStatus(AttachmentStatus.ACTIVE);
 
-        Notice notice = new Notice();
-        notice.setId(noticeId);
-        notice.setTitle("Old Title");
-        notice.setAttachments(List.of(attachment));
-
         User user = new User();
         user.setId(userId);
         user.setRole(Role.ADMIN);
+
+        Notice notice = new Notice();
+        notice.setId(noticeId);
+        notice.setTitle("Old Title");
+        notice.setCreatedUser(user);
+        notice.setAttachments(List.of(attachment));
 
         NoticeUpdateRequestDto updateRequest =
                 NoticeUpdateRequestDto.builder()
