@@ -1,4 +1,4 @@
-version: "1.0"
+version: "3.8"
 
 services:
   db:
@@ -34,6 +34,7 @@ services:
       REDIS_HOST: 172.18.0.3
     depends_on:
       - db
+      - redis
     networks:
       announcement_net:
         ipv4_address: 172.18.0.4
