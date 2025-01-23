@@ -57,7 +57,7 @@ transaction 을 활용한 무결성을 보장하였고, synchronized 키워드�
 
 사용자는 공지사항을 등록할 수 있는 권한을 가진 유저가 api 를 이용한다고 가정했고,
 
-ADMIN, MANAGER  권한을 가진 사람많이 공지사항을 등록할 수 있도록 간단한 권한
+ADMIN, MANAGER  권한을 가진 사람만이 공지사항을 등록할 수 있도록 간단한 권한
 
 체계를 두었습니다. 
 
@@ -93,7 +93,7 @@ announcement
 ├── AnnouncementApplication.java  
 
 controller : controller 클래스  
-dto : controller 접근 layer dto 디렉토리
+dto : controller 접근 layer dto 디렉토리  
 services : 비즈니스 로직 등이 모여 있는 클래스  
 repositories : database 접근 객체  
 entities : 엔티티 클래스 디렉토리
@@ -103,9 +103,9 @@ entities : 엔티티 클래스 디렉토리
 
 대량의 요청이 올 것을 대비하여 로컬에서 테스트 코드를 작성
 
-NoticeServiceConcurrencyTest.class 를 작성하여 동시 스레드 수를 100
+NoticeServiceConcurrencyTest.class 파일 내 작업 수를 100000,
 
-작업 수를 100000 으로 잡아 동시 작업 스레드 수를 1000개로 하여 동시성 테스트를 
+동시 작업 스레드 수를 1000개로 하여 동시성 테스트를 
 
 진행하였습니다.
 
