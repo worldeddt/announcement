@@ -65,6 +65,7 @@ class NoticeServiceTest {
     NoticeRequestDto noticeRequestDto;
     NoticeDeleteDto noticeDeleteDto;
     AttachmentRequestDto attachmentRequestDto;
+    NoticeResponseDto noticeResponseDto;
 
     @BeforeEach
     public void init() {
@@ -110,6 +111,8 @@ class NoticeServiceTest {
         );
         notice.setStatus(NoticeStatus.ACTIVE);
 
+        noticeResponseDto = notice.toDto();
+
         noticeUpdateRequestDto =
                 NoticeUpdateRequestDto.builder()
                         .title("update test")
@@ -144,6 +147,8 @@ class NoticeServiceTest {
 
     @Test
     void createNotice() {
+
+        user.setRole(Role.ADMIN);
         // Mock Repository
         when(userRepository.findById(user.getId()))
                 .thenReturn(Optional.of(user));
@@ -169,7 +174,7 @@ class NoticeServiceTest {
         //Mock Repository
         when(noticeRepository.findByIdAndStatus(noticeId, NoticeStatus.ACTIVE)).thenReturn(Optional.of(notice));
         when(redisService.hasKey(NOTICE_CACHE_PREFIX + noticeId)).thenReturn(true);
-        when(redisService.getValue(NOTICE_CACHE_PREFIX + noticeId)).thenReturn(notice);
+        when(redisService.getValue(NOTICE_CACHE_PREFIX + noticeId)).thenReturn(noticeResponseDto);
 
         //when
         NoticeResponseDto responseNotice = noticeService.getNoticeById(noticeId);
@@ -189,8 +194,9 @@ class NoticeServiceTest {
     @Test
     void deleteNotice() {
         //when
+        user.setRole(Role.ADMIN);
         when(noticeRepository.findByIdAndStatus(noticeId, NoticeStatus.ACTIVE)).thenReturn(Optional.of(notice));
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(userRepository.findById(noticeDeleteDto.getUserId())).thenReturn(Optional.of(user));
 
         noticeService.deleteNotice(noticeId, noticeDeleteDto);
 
@@ -212,8 +218,9 @@ class NoticeServiceTest {
     @Test
     void findNoticeAfterDelete() {
 
+        user.setRole(Role.ADMIN);
         when(noticeRepository.findByIdAndStatus(noticeId, NoticeStatus.ACTIVE)).thenReturn(Optional.of(notice));
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(userRepository.findById(noticeDeleteDto.getUserId())).thenReturn(Optional.of(user));
 
         noticeService.deleteNotice(noticeId, noticeDeleteDto);
 
@@ -252,7 +259,10 @@ class NoticeServiceTest {
 
     @Test
     void updateNotice() {
+
+        user.setRole(Role.ADMIN);
         //Mock Repository
+        when(userRepository.findById(noticeUpdateRequestDto.getUpdateUserId())).thenReturn(Optional.of(user));
         when(noticeRepository.findByIdAndStatus(noticeId, NoticeStatus.ACTIVE)).thenReturn(Optional.of(notice));
 
         //when
@@ -263,7 +273,7 @@ class NoticeServiceTest {
         assertEquals(noticeResponseDto.getContent(), noticeUpdateRequestDto.getContent());
 
         verify(redisService, times(1)).putValue(
-                eq(NOTICE_CACHE_PREFIX + noticeId), any(Notice.class), eq(90L));
+                eq(NOTICE_CACHE_PREFIX + noticeId), any(NoticeResponseDto.class));
 
         verify(noticeRepository, times(1)).findByIdAndStatus(noticeId, NoticeStatus.ACTIVE);
     }
