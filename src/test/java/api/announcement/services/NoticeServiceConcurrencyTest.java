@@ -74,7 +74,7 @@ public class NoticeServiceConcurrencyTest {
             return savedNotice;
         });
 
-        doNothing().when(redisService).putValue(anyString(), any(Notice.class), anyLong());
+        doNothing().when(redisService).putValue(anyString(), any(NoticeResponseDto.class));
 
         NoticeRequestDto requestDto = NoticeRequestDto.builder()
                 .title("Concurrent Test Notice")
