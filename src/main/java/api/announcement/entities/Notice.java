@@ -13,12 +13,14 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Data
 @Entity
 @Table
@@ -56,6 +58,7 @@ public class Notice extends BaseEntity implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_user")
+    @JsonManagedReference
     private User createdUser;
 
     private Long recentUpdateUser;
@@ -78,19 +81,12 @@ public class Notice extends BaseEntity implements Serializable {
                 .viewCount(this.getViewCount())
                 .startDate(this.getStartDate())
                 .endDate(this.getEndDate())
-                .createdUser(this.getCreatedUser())
+                .createdUser(this.getCreatedUser().toResponseDto())
                 .recentUpdateUser(this.getRecentUpdateUser())
-                .attachments(
-                        this.getAttachments()
-                                .stream()
-                                .map(Attachment::toDto)
-                                .toList()
-                )
                 .build();
 
-
-        if (this.getAttachments() != null && !this.getAttachments().isEmpty()) {
-            noticeResponseDto = NoticeResponseDto.builder()
+        if (this.getAttachments() != null && this.getAttachments().size() > 0) {
+            noticeResponseDto = noticeResponseDto.toBuilder()
                     .attachments(
                             this.getAttachments()
                                     .stream()

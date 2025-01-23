@@ -1,6 +1,6 @@
 CREATE DATABASE IF NOT EXISTS announcement;
 
-create table if not exists user
+create table if not exists announcement.user
 (
     id       bigint       not null auto_increment,
     email    varchar(255) not null,

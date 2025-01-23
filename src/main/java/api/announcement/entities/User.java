@@ -1,6 +1,7 @@
 package api.announcement.entities;
 
 
+import api.announcement.controller.dto.UserResponseDto;
 import api.announcement.enums.Role;
 import api.announcement.enums.UserStatus;
 import jakarta.persistence.*;
@@ -35,4 +36,12 @@ public class User extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private UserStatus status;
+
+    public UserResponseDto toResponseDto() {
+        return UserResponseDto.builder()
+                .id(id)
+                .username(username)
+                .email(email)
+                .build();
+    }
 }

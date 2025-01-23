@@ -1,7 +1,5 @@
 package api.announcement.components;
 
-import api.announcement.entities.User;
-import api.announcement.enums.Role;
 import api.announcement.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;

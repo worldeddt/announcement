@@ -1,7 +1,6 @@
 package api.announcement.controller.dto;
 
 
-import api.announcement.entities.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 public class NoticeResponseDto {
@@ -26,7 +25,7 @@ public class NoticeResponseDto {
     private LocalDateTime endDate;
 
     private int viewCount;
-    private User createdUser;
+    private UserResponseDto createdUser;
     private Long recentUpdateUser;
 
     private List<AttachmentResponseDto> attachments;
